@@ -1,5 +1,5 @@
-#ifndef __PTF_COMMAND__
-#define __PTF_COMMAND__
+#ifndef __PTF_COMMAND_H__
+#define __PTF_COMMAND_H__
 
 struct Command {
     char* slug;

@@ -14,7 +14,7 @@ struct HelpCommandOptions {
     struct Command *command;
 };
 
-void* parseArgs(int argc, char *argv[]) {
+struct HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
 
     struct HelpCommandOptions *options = malloc(sizeof(struct HelpCommandOptions));
 
@@ -28,7 +28,7 @@ void* parseArgs(int argc, char *argv[]) {
     return options;
 }
 
-int execute(struct HelpCommandOptions* options) {
+int executeHelp(struct HelpCommandOptions* options) {
     if(options->helpFor == ALL) {
         printf("%s", generalHelpText);
     }
@@ -42,8 +42,8 @@ struct Command createHelpCommand() {
     struct Command helpCommand = {
             "help",
             "This is help command",
-            parseArgs,
-            (int (*)(void* args)) execute
+            (void* (*)(int, char*[])) parseHelpArgs,
+            (int (*)(void*)) executeHelp
     };
 
     return helpCommand;
