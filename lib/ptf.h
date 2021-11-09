@@ -2,6 +2,7 @@
 #define __PTF_LIB_H__
 
 #include "predicate.h"
+#include "predicateNamespace.h"
 
 void createPtfStatement(int line, void* value, struct PtfPredicate predicate);
 

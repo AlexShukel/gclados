@@ -1,8 +1,8 @@
-#include "predicate.h"
+#include "intPredicates.h"
 #include "stdlib.h"
 #include "stdio.h"
 
-static struct PtfPredicateResult toEqualIntPredicate(void* value, const int* options) {
+struct PtfPredicateResult ptfToEqualIntPredicate(void* value, const int* options) {
     char* message = calloc(80, sizeof(char));
     int expectedValue = *((int*) value);
     bool pass = expectedValue == *options;
@@ -17,17 +17,13 @@ static struct PtfPredicateResult toEqualIntPredicate(void* value, const int* opt
     return result;
 };
 
-static struct PtfPredicate toEqualInt(int value) {
+struct PtfPredicate ptfToEqualInt(int value) {
     int* options = malloc(sizeof(int));
     *options = value;
     struct PtfPredicate predicate = {
             .options = options,
-            .execute = (struct PtfPredicateResult (*)(void*, void*)) toEqualIntPredicate,
+            .execute = (struct PtfPredicateResult (*)(void*, void*)) ptfToEqualIntPredicate,
     };
 
     return predicate;
 }
-
-struct PtfPredicateRegistry ptf = {
-        .toEqualInt = toEqualInt
-};

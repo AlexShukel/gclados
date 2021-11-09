@@ -13,10 +13,4 @@ struct PtfPredicate {
     void* options;
 };
 
-struct PtfPredicateRegistry {
-    struct PtfPredicate (*toEqualInt)(int value);
-};
-
-extern struct PtfPredicateRegistry ptf;
-
 #endif
