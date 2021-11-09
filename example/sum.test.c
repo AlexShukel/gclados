@@ -3,7 +3,9 @@
 
 // This is some test
 TEST {
-    ensure(sum(1, 2), ptf.toEqualInt(4));
+    unsigned short value = 65535;
+
+    ensure(-65535, ptf.toEqualBytes(&value, sizeof(short)));
 }
 
 int main() {
