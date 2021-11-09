@@ -3,6 +3,7 @@
 #include "help.h"
 #include "run.h"
 #include <string.h>
+#include "ptf.h"
 
 /*bool isKnownCommand(char* command) {
     return strcmp(helpCmd.slug, command) == 0;
@@ -15,5 +16,9 @@ int main(int argc, char *argv[]) {
 
     void* opts = runCmd.parseArgs(argc - 2, argv + 2);
 
-    return runCmd.execute(opts);
+    if(opts != NULL) {
+        return runCmd.execute(opts);
+    } else {
+        return 0;
+    }
 }

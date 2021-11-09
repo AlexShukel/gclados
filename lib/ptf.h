@@ -1,15 +1,15 @@
-#ifndef PTF
-#define PTF
+#ifndef __PTF_LIB_H__
+#define __PTF_LIB_H__
 
-void createUnit(int line, void* value);
+#include "predicate.h"
 
-#define CONCAT(a, b) CONCAT_INNER(a, b)
-#define CONCAT_INNER(a, b) a ## b
+void createPtfStatement(int line, void* value, struct PtfPredicate predicate);
 
-#define UNIT_INNER(varName, value) \
-typeof(value) varName = value; \
-createUnit(__LINE__, &varName);
+#define PTF_CONCAT(a, b) PTF_CONCAT_INNER(a, b)
+#define PTF_CONCAT_INNER(a, b) a ## b
+#define PTF_ENSURE_INNER(varName, value, predicate) typeof(value) (varName) = value; createPtfStatement(__LINE__, &(varName), predicate);
 
-#define unit(value) UNIT_INNER(CONCAT(unitVal, __COUNTER__), value)
+#define ensure(value, predicate) PTF_ENSURE_INNER(PTF_CONCAT(__ptfValue, __COUNTER__), value, predicate)
+#define TEST void PTF_CONCAT(__ptfTest, __COUNTER__) ()
 
 #endif
