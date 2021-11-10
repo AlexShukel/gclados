@@ -25,6 +25,7 @@ struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
 
         for(int i = 0; i < argc; i++) {
             if(glob(argv[i], GLOB_APPEND, printError, &globBuffer) != 0) {
+                printf("Error!\n");
                 return NULL;
             }
         }
@@ -32,6 +33,7 @@ struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
         options->pathCount = globBuffer.gl_pathc;
         options->paths = globBuffer.gl_pathv;
     } else {
+        printf("Failed to parse arguments.\n");
         return NULL;
     }
 
@@ -41,8 +43,8 @@ struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
 int executeRun(struct RunCommandOptions* options) {
     printf("Running %ld tests...\n", options->pathCount);
 
-    for(int i = 0; i < options->pathCount; i++) {
-        printf("%s\n", options->paths[i]);
+    if(options->pathCount > 0) {
+        readTestFile(options->paths[0]);
     }
 
     return 0;

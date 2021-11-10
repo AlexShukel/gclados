@@ -2,12 +2,15 @@
 #include "ptf.h"
 
 // This is some test
-TEST {
+TEST(test0) {
     unsigned short value = 65535;
 
     ensure(-65535, ptf.toEqualBytes(&value, sizeof(short)));
 }
 
-int main() {
-    __ptfTest0();
+// This is some test
+TEST(test1) {
+    unsigned short value = 65535;
+
+    ensure(-65535, ptf.toEqualBytes(&value, sizeof(short)));
 }
