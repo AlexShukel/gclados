@@ -2,7 +2,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+
+void runPtfTestSuites(struct PtfTestSuite* suites, size_t count) {
+
+
+
+}
 
 void createPtfStatement(int line, char* filePath, void* value, struct PtfPredicate predicate) {
     struct PtfPredicateResult result = predicate.execute(value, predicate.options);

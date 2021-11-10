@@ -2,17 +2,30 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-struct PtfPredicateResult ptfToEqualIntPredicate(void* value, const int* options) {
-    char* message = calloc(80, sizeof(char));
-    int expectedValue = *((int*) value);
-    bool pass = expectedValue == *options;
+char* ptfIntToString(int a) {
+    char* str = calloc(20, sizeof(char));
 
-    sprintf(message, pass ? "    Expected: not %d" : "    Expected: %d\n    Received: %d", expectedValue, *options);
+    sprintf(str, "%d", a);
+
+    return str;
+}
+
+struct PtfPredicateResult ptfToEqualIntPredicate(void* value, const int* options) {
+    int receivedValue = *((int*) value);
+    bool pass = receivedValue == *options;
+
+    // sprintf(message, pass ? "    Expected: not %d" : "    Expected: %d\n    Received: %d", expectedValue, *options);
+
+    char* expectedValueAsString = ptfIntToString(*options);
+    char* receivedValueAsString = ptfIntToString(receivedValue);
 
     struct PtfPredicateResult result = {
-            .failMessage = message,
+            .failMessage = ptfStandardErrorMessage(pass, "ptf.toEqualInt(%s)", expectedValueAsString, receivedValueAsString),
             .pass = pass,
     };
+
+    free(expectedValueAsString);
+    free(receivedValueAsString);
 
     return result;
 };
