@@ -26,6 +26,12 @@ struct PtfColors {
     char* (*applyFlags)(char* input, struct PtfAnsiFlags);
     int (*foregroundColor)(enum PtfColor color);
     int (*backgroundColor)(enum PtfColor color);
+    int (*bold)();
+    int (*dimmed)();
+    int (*italic)();
+    int (*underline)();
+    int (*invert)();
+    int (*strikethrough)();
 };
 
 extern struct PtfColors ptfColors;

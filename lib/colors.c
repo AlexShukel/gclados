@@ -7,8 +7,19 @@
 
 bool PTF_SUPPORTED_COLORS = true;
 
+// ANSI codes taken from https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
+const int PTF_FOREGROUND_COLOR_OFFSET = 30;
+const int PTF_BACKGROUND_COLOR_OFFSET = 40;
+const int PTF_RESET = 0;
+const int PTF_BOLD = 1;
+const int PTF_DIMMED = 2;
+const int PTF_ITALIC = 3;
+const int PTF_UNDERLINE = 4;
+const int PTF_INVERT = 7;
+const int PTF_STRIKETHROUGH = 9;
+
 void ptfSetColorsSupported(bool supported) {
-    PTF_SUPPORTED_COLORS = false;
+    PTF_SUPPORTED_COLORS = supported;
 }
 
 bool ptfColorsSupported() {
@@ -28,7 +39,7 @@ char* ptfApplyAnsiFlags(char* string, struct PtfAnsiFlags flags) {
         currentOffset += sprintf(newString + currentOffset, "%02d%c", flags.flags[i], i != flags.count - 1 ? ';' : 'm');
     }
 
-    sprintf(newString + currentOffset, "%s\x1b[0m", string);
+    sprintf(newString + currentOffset, "%s\x1b[%dm", string, PTF_RESET);
 
     return newString;
 }
@@ -54,11 +65,35 @@ struct PtfAnsiFlags ptfCreateAnsiFlags(int count, ...) {
 }
 
 int ptfForegroundColor(enum PtfColor color) {
-    return 30 + color;
+    return (int) (PTF_FOREGROUND_COLOR_OFFSET + color);
 }
 
 int ptfBackgroundColor(enum PtfColor color) {
-    return 40 + color;
+    return (int)(PTF_BACKGROUND_COLOR_OFFSET + color);
+}
+
+int ptfBold() {
+    return PTF_BOLD;
+}
+
+int ptfDimmed() {
+    return PTF_DIMMED;
+}
+
+int ptfItalic() {
+    return PTF_ITALIC;
+}
+
+int ptfUnderline() {
+    return PTF_UNDERLINE;
+};
+
+int ptfInvert() {
+    return PTF_INVERT;
+}
+
+int ptfStrikethrough() {
+    return PTF_STRIKETHROUGH;
 }
 
 struct PtfColors ptfColors = {
@@ -68,4 +103,10 @@ struct PtfColors ptfColors = {
         .applyFlags = ptfApplyAnsiFlags,
         .foregroundColor = ptfForegroundColor,
         .backgroundColor = ptfBackgroundColor,
+        .bold = ptfBold,
+        .dimmed = ptfDimmed,
+        .italic = ptfItalic,
+        .underline = ptfUnderline,
+        .invert = ptfInvert,
+        .strikethrough = ptfStrikethrough,
 };
