@@ -3,8 +3,12 @@
 #include "stdio.h"
 
 char* ptfStandardErrorMessage(bool pass, char* usage, char* expected, char* received) {
-    const struct PtfAnsiFlags expectedValueFlags = ptfColors.createFlags(1, ptfColors.foregroundColor(PTF_GREEN));
-    const struct PtfAnsiFlags receivedValueFlags = ptfColors.createFlags(1, ptfColors.foregroundColor(PTF_RED));
+    const struct PtfAnsiFlags expectedValueFlags = ptfColors.createFlags(2,
+            ptfColors.foregroundColor(PTF_GREEN),
+            ptfColors.bold());
+    const struct PtfAnsiFlags receivedValueFlags = ptfColors.createFlags(2,
+            ptfColors.foregroundColor(PTF_RED),
+            ptfColors.bold());
 
     char* messageBuff = calloc(1024, sizeof(char));
     int offset = 0;

@@ -14,8 +14,6 @@ struct PtfPredicateResult ptfToEqualIntPredicate(void* value, const int* options
     int receivedValue = *((int*) value);
     bool pass = receivedValue == *options;
 
-    // sprintf(message, pass ? "    Expected: not %d" : "    Expected: %d\n    Received: %d", expectedValue, *options);
-
     char* expectedValueAsString = ptfIntToString(*options);
     char* receivedValueAsString = ptfIntToString(receivedValue);
 

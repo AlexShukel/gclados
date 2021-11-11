@@ -4,7 +4,7 @@
 // This is some test
 TEST(test0) {
 
-    ensure(1, ptf.toEqualInt(2));
+    ensure(sum(1, 2), ptf.toEqualInt(2));
 }
 
 // This is some test
@@ -15,5 +15,13 @@ TEST(test1) {
 }
 
 int main() {
-    __ptfTest_test0(NULL).execute();
+    struct PtfTest tests[] = { __ptfTest_test1(NULL) };
+    struct PtfTestSuite suite = createPtfTestSuite("sum.test.ts", tests, 1);
+    struct PtfTestSuite suite2 = createPtfTestSuite("sum.test.ts", tests, 1);
+
+    suite2.status = PTF_WAITING;
+
+    printSuite(suite, true);
+    printSuite(suite2, true);
+
 }

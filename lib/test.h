@@ -3,9 +3,9 @@
 
 struct PtfTest {
     void (*execute)(void);
-    char* description;
+    const char* description;
 };
 
-struct PtfTest createPtfTest(void (*execute)(void), char* description);
+struct PtfTest createPtfTest(void (*execute)(void), const char* description);
 
 #endif

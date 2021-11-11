@@ -18,31 +18,29 @@ struct PtfPredicateResult ptfToEqualBytesPredicate(void* value, const struct Ptf
         }
     }
 
-    char* message = calloc(options->count * 2 + 80, sizeof(char));
+    char* realValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
+    char* expectedValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
 
-    char* realValueAsHex = calloc(options->count * 2 + 1, sizeof(char));
-    char* expectedValueAsHex = calloc(options->count * 2 + 1, sizeof(char));
+    realValueAsHex[0] = expectedValueAsHex[0] = '0';
+    realValueAsHex[1] = expectedValueAsHex[1] = 'x';
 
     // TODO: move to a separate function
     char valueToHex[] = "0123456789ABCDEF";
 
     for(int i = 0; i < options->count * 2; i += 2) {
-        realValueAsHex[i] = valueToHex[realValue[i / 2] / 16];
-        realValueAsHex[i + 1] = valueToHex[realValue[i / 2] % 16];
-        expectedValueAsHex[i] = valueToHex[expectedValue[i / 2] / 16];
-        expectedValueAsHex[i + 1] = valueToHex[expectedValue[i / 2] % 16];
+        realValueAsHex[i + 2] = valueToHex[realValue[i / 2] / 16];
+        realValueAsHex[i + 3] = valueToHex[realValue[i / 2] % 16];
+        expectedValueAsHex[i + 2] = valueToHex[expectedValue[i / 2] / 16];
+        expectedValueAsHex[i + 3] = valueToHex[expectedValue[i / 2] % 16];
     }
 
-    // TODO: move to a separate function, to reuse it in multiple predicates
-    sprintf(message, pass ? "    Expected: not 0x%s" : "    Expected: 0x%s\n    Received: 0x%s", expectedValueAsHex, realValueAsHex);
+    struct PtfPredicateResult result = {
+            .failMessage = ptfStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex),
+            .pass = pass,
+    };
 
     free(realValueAsHex);
     free(expectedValueAsHex);
-
-    struct PtfPredicateResult result = {
-            .failMessage = message,
-            .pass = pass,
-    };
 
     return result;
 };

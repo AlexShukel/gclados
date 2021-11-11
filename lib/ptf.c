@@ -5,7 +5,15 @@
 
 void runPtfTestSuites(struct PtfTestSuite* suites, size_t count) {
 
+    for(int i = 0; i < count; i++) {
 
+    }
+
+}
+
+void ptfDrawTests() {
+    // Clear screen
+    printf("\x1b[H\x1b[2J");
 
 }
 

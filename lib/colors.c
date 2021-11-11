@@ -17,6 +17,7 @@ const int PTF_ITALIC = 3;
 const int PTF_UNDERLINE = 4;
 const int PTF_INVERT = 7;
 const int PTF_STRIKETHROUGH = 9;
+const int PTF_FRAMED = 51;
 
 void ptfSetColorsSupported(bool supported) {
     PTF_SUPPORTED_COLORS = supported;
@@ -96,6 +97,10 @@ int ptfStrikethrough() {
     return PTF_STRIKETHROUGH;
 }
 
+int ptfFramed() {
+    return PTF_FRAMED;
+}
+
 struct PtfColors ptfColors = {
         .setColorsSupported = ptfSetColorsSupported,
         .colorsSupported = ptfColorsSupported,
@@ -109,4 +114,5 @@ struct PtfColors ptfColors = {
         .underline = ptfUnderline,
         .invert = ptfInvert,
         .strikethrough = ptfStrikethrough,
+        .framed = ptfFramed,
 };

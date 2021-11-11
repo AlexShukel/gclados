@@ -32,6 +32,7 @@ struct PtfColors {
     int (*underline)();
     int (*invert)();
     int (*strikethrough)();
+    int (*framed)();
 };
 
 extern struct PtfColors ptfColors;
