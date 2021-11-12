@@ -1,15 +1,16 @@
 #include "builder.h"
 #include "stdio.h"
 #include "ptf.h"
+#include "string.h"
 
 #define STR_VALUE(arg)      #arg
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define PTF_TEST_PREFIX_AS_STRING MACRO_VALUE(PTF_TEST_PREFIX)
 
 char *buildTestFile(struct ParsedTest* tests, size_t count) {
-    char *filename = calloc(L_tmpnam, sizeof(char));
+    char *filename = tmpNameExtended(".c");
 
-    if(tmpnam(filename) == NULL) {
+    if(filename == NULL) {
         // TODO: call panic here
     }
 

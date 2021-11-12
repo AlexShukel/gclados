@@ -10,7 +10,6 @@
 }*/
 
 int main(int argc, char *argv[]) {
-
     struct Command helpCmd = createHelpCommand();
     struct Command runCmd = createRunCommand();
 

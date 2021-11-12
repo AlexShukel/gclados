@@ -1,14 +1,19 @@
 #include "run.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <glob.h>
+
 #include "testParser.h"
 #include "builder.h"
+#include "filenameUtils.h"
 
 struct RunCommandOptions {
     char** paths;
     size_t pathCount;
+    size_t gccArgCount;
+    char** gccArgs;
 };
 
 int printError(const char* message, int a) {
@@ -18,15 +23,34 @@ int printError(const char* message, int a) {
 struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     struct RunCommandOptions* options = malloc(sizeof(struct RunCommandOptions));
 
-    if(argc > 0) {
+    int doubleHyphenPosition = -1;
+
+    for(int i = 0; i < argc; i++) {
+        if(strcmp(argv[i], "--") == 0) {
+            doubleHyphenPosition = i;
+            break;
+        }
+    }
+
+    if(doubleHyphenPosition != -1) {
+        options->gccArgs = argv + doubleHyphenPosition + 1;
+        options->gccArgCount = argc - doubleHyphenPosition - 1;
+    } else {
+        options->gccArgs = NULL;
+        options->gccArgCount = 0;
+    }
+
+    if(argc > 0 && (doubleHyphenPosition == -1 || argc - doubleHyphenPosition > 0)) {
         glob_t globBuffer;
 
         globBuffer.gl_pathc = 0;
         globBuffer.gl_pathv = NULL;
         globBuffer.gl_offs = 0;
 
-        for(int i = 0; i < argc; i++) {
+        int queryCount = doubleHyphenPosition == -1 ? argc : doubleHyphenPosition;
+        for(int i = 0; i < queryCount; i++) {
             if(glob(argv[i], GLOB_APPEND, printError, &globBuffer) != 0) {
+                // TODO: add more detailed message here
                 printf("Error!\n");
                 return NULL;
             }
@@ -35,36 +59,58 @@ struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
         options->pathCount = globBuffer.gl_pathc;
         options->paths = globBuffer.gl_pathv;
     } else {
-        printf("Failed to parse arguments.\n");
-        return NULL;
+        options->pathCount = 0;
+        options->paths = NULL;
     }
 
     return options;
 }
 
-int executeRun(struct RunCommandOptions* options) {
-    printf("Running %ld tests...\n", options->pathCount);
+char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
+    char commandBuffer[1024];
 
+    size_t offset = sprintf(commandBuffer, "gcc %s", entryFilePath);
+
+    for(int i = 0; i < options.pathCount; i++) {
+        offset += sprintf(commandBuffer + offset, " %s", options.paths[i]);
+    }
+
+    for(int i = 0; i < options.gccArgCount; ++i) {
+        offset += sprintf(commandBuffer + offset, " %s", options.gccArgs[i]);
+    }
+
+    char* outputFile = tmpNameExtended("");
+
+    if(outputFile == NULL) {
+        // TODO: add panic here
+    }
+
+    sprintf(commandBuffer + offset, " -o %s", outputFile);
+
+    printf("Executing command \"%s\"...\n", commandBuffer);
+    fflush(stdout);
+
+    system(commandBuffer);
+
+    return outputFile;
+}
+
+int executeRun(struct RunCommandOptions* options) {
     if(options->pathCount > 0) {
         struct ParsedTest tests[100];
         size_t count = parseTestFile(options->paths[0], tests);
 
         char* testFile = buildTestFile(tests, count);
 
-        FILE* file = fopen(testFile, "r");
+        char* compiled = compileTestEntry(testFile, *options);
+        fflush(stdout);
 
-        char buff[1024];
+        system(compiled);
 
-        int c = fread(buff, sizeof(char), 1024, file);
-
-        printf("%s", buff);
-
-        fclose(file);
-
-        char command[1024];
-        sprintf(command, "gcc -c -x c %s -I./../../lib -o C:/Users/artio/CLionProjects/propag-testing-framework/cmake-build-debug/hello.o", testFile);
-
-        system(command);
+        free(testFile);
+        free(compiled);
+    } else {
+        printf("No tests found.\n");
     }
 
     return 0;

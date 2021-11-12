@@ -1,7 +1,7 @@
 #include "sum.h"
 #include "ptf.h"
 
-int currentTEST(asdf) {
+int currentTEST(int asdf) {
     return 0;
 };
 
