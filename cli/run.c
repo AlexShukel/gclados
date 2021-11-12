@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <glob.h>
+#include "testParser.h"
+#include "builder.h"
 
 struct RunCommandOptions {
     char** paths;
@@ -44,7 +46,25 @@ int executeRun(struct RunCommandOptions* options) {
     printf("Running %ld tests...\n", options->pathCount);
 
     if(options->pathCount > 0) {
-        readTestFile(options->paths[0]);
+        struct ParsedTest tests[100];
+        size_t count = parseTestFile(options->paths[0], tests);
+
+        char* testFile = buildTestFile(tests, count);
+
+        FILE* file = fopen(testFile, "r");
+
+        char buff[1024];
+
+        int c = fread(buff, sizeof(char), 1024, file);
+
+        printf("%s", buff);
+
+        fclose(file);
+
+        char command[1024];
+        sprintf(command, "gcc -c -x c %s -I./../../lib -o C:/Users/artio/CLionProjects/propag-testing-framework/cmake-build-debug/hello.o", testFile);
+
+        system(command);
     }
 
     return 0;

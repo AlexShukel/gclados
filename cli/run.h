@@ -2,7 +2,6 @@
 #define __PTF_RUN_H__
 
 #include "command.h"
-#include "test.h"
 
 struct Command createRunCommand();
 

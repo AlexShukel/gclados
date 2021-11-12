@@ -1,19 +1,26 @@
 #include "sum.h"
 #include "ptf.h"
 
-// This is some test
+int currentTEST(asdf) {
+    return 0;
+};
+
+// Should be equal to int
 TEST(test0) {
+
+    const char fakeTest[] = " TEST(insideString) ";
 
     ensure(sum(1, 2), ptf.toEqualInt(2));
 }
 
-// This is some test
+// Should be equal to bytes
 TEST(test1) {
     unsigned short value = 65535;
 
     ensure(-65535, ptf.toEqualBytes(&value, sizeof(short)));
 }
 
+/*
 int main() {
     struct PtfTest tests[] = { __ptfTest_test1(NULL) };
     struct PtfTestSuite suite = createPtfTestSuite("sum.test.ts", tests, 1);
@@ -25,3 +32,4 @@ int main() {
     printSuite(suite2, true);
 
 }
+*/
