@@ -3,7 +3,7 @@
 
 #include "predicate.h"
 #include "stdio.h"
-#include "messageUtils.h"
+#include "ioutils.h"
 
 struct PtfPredicate ptfToEqualBytes(void* bytes, size_t count);
 

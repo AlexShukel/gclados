@@ -1,5 +1,8 @@
 #include "testSuite.h"
+
 #include <stdio.h>
+
+#include "ioutils.h"
 
 struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount) {
     struct PtfTestSuite suite = {
@@ -7,15 +10,21 @@ struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest
             .tests = tests,
             .testCount = testCount,
             .status = PTF_WAITING,
+            .completedTestCount = 0,
     };
 
     return suite;
 }
 
-void runTestSuite(struct PtfTestSuite suite) {
-    for(size_t i = 0; i < suite.testCount; ++i) {
-
+bool ptfRunNextTest(struct PtfTestSuite *suite, struct PtfDynamicArray* results) {
+    if(suite->completedTestCount >= suite->testCount) {
+        // TODO: add panic here
     }
+
+    ptfRunTest(suite->tests[suite->completedTestCount], results);
+    suite->completedTestCount += 1;
+
+    return suite->completedTestCount == suite->testCount;
 }
 
 void printSuite(struct PtfTestSuite suite, bool minified) {
@@ -39,7 +48,13 @@ void printSuite(struct PtfTestSuite suite, bool minified) {
             break;
     }
 
-    printf("%s %s\n", status, suite.testSuiteName);
+    printf("%s %s", status, suite.testSuiteName);
+
+    if(suite.status == PTF_RUNNING) {
+        ptfPrintProgress(stdout, (double) (suite.completedTestCount + 1) / (double) suite.testCount, 5);
+    }
+
+    printf("\n");
 
     free(status);
 }

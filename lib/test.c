@@ -8,3 +8,14 @@ struct PtfTest createPtfTest(void (*executor)(), const char* description) {
 
     return test;
 }
+
+struct PtfDynamicArray* currentResults;
+
+void ptfAddStatementResult(struct PtfStatementResult result) {
+    ptfPush(currentResults, &result);
+}
+
+void ptfRunTest(struct PtfTest test, struct PtfDynamicArray* result) {
+    currentResults = result;
+    test.execute();
+}

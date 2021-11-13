@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "colors.h"
+#include "test.h"
 
 enum PtfTestSuiteStatus {
     PTF_PASS,
@@ -17,10 +18,12 @@ struct PtfTestSuite {
     const char* testSuiteName;
     struct PtfTest* tests;
     size_t testCount;
+    size_t completedTestCount;
     enum PtfTestSuiteStatus status;
 };
 
 struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount);
 void printSuite(struct PtfTestSuite suite, bool minified);
+bool ptfRunNextTest(struct PtfTestSuite *suite, struct PtfDynamicArray* results);
 
 #endif

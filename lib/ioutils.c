@@ -1,6 +1,23 @@
-#include "messageUtils.h"
+#include "ioutils.h"
 #include "stdlib.h"
 #include "stdio.h"
+
+void ptfPrintProgress(FILE* file, double percentage, size_t width) {
+    size_t progressBufferLength = width + 3;
+    char progressBuffer[width + progressBufferLength];
+
+    progressBuffer[0] = '[';
+    progressBuffer[progressBufferLength - 2] = ']';
+    progressBuffer[progressBufferLength - 1] = '\0';
+
+    size_t center = (size_t) ((double) width * percentage) + 1;
+
+    for(size_t i = 1; i < width + 1; i++) {
+        progressBuffer[i] = i <= center ? '#' : ' ';
+    }
+
+    fprintf(file, "%s", progressBuffer);
+}
 
 char* ptfStandardErrorMessage(bool pass, char* usage, char* expected, char* received) {
     const struct PtfAnsiFlags expectedValueFlags = ptfColors.createFlags(2,

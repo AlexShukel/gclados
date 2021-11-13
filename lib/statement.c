@@ -5,6 +5,11 @@
 void createPtfStatement(int line, char* filePath, void* value, struct PtfPredicate predicate) {
     bool pass = predicate.execute(value, predicate.options);
 
+    struct PtfStatementResult result = {
+            .pass = pass,
+            .failMessage = NULL,
+    };
+
     if(!pass) {
         /*
         // TODO: make this work
@@ -36,10 +41,10 @@ void createPtfStatement(int line, char* filePath, void* value, struct PtfPredica
         */
         char* message = predicate.failMessage(value, predicate.options, pass);
 
-        printf("Test failed on line %d:\n\n%s\n", line, message);
-
-        free(message);
+        result.failMessage = message;
     }
 
     free(predicate.options);
+
+    ptfAddStatementResult(result);
 }
