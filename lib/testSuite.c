@@ -6,10 +6,16 @@ struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest
             .testSuiteName = testSuiteName,
             .tests = tests,
             .testCount = testCount,
-            .status = PTF_RUNNING,
+            .status = PTF_WAITING,
     };
 
     return suite;
+}
+
+void runTestSuite(struct PtfTestSuite suite) {
+    for(size_t i = 0; i < suite.testCount; ++i) {
+
+    }
 }
 
 void printSuite(struct PtfTestSuite suite, bool minified) {

@@ -6,17 +6,9 @@ struct PtfEqualBytePredicateOptions {
     size_t count;
 };
 
-struct PtfPredicateResult ptfToEqualBytesPredicate(void* value, const struct PtfEqualBytePredicateOptions* options) {
+char *ptfToEqualBytesMessage(void* value, const struct PtfEqualBytePredicateOptions* options, bool pass) {
     unsigned char* realValue = (unsigned char*) value;
     unsigned char* expectedValue = (unsigned char*) options->bytes;
-
-    bool pass = true;
-    for(int i = 0; i < options->count; i++) {
-        if(realValue[i] != expectedValue[i]) {
-            pass = false;
-            break;
-        }
-    }
 
     char* realValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
     char* expectedValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
@@ -34,16 +26,28 @@ struct PtfPredicateResult ptfToEqualBytesPredicate(void* value, const struct Ptf
         expectedValueAsHex[i + 3] = valueToHex[expectedValue[i / 2] % 16];
     }
 
-    struct PtfPredicateResult result = {
-            .failMessage = ptfStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex),
-            .pass = pass,
-    };
+    char* message = ptfStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
 
     free(realValueAsHex);
     free(expectedValueAsHex);
 
-    return result;
-};
+    return message;
+}
+
+bool ptfToEqualBytesPredicate(void* value, const struct PtfEqualBytePredicateOptions* options) {
+    unsigned char* realValue = (unsigned char*) value;
+    unsigned char* expectedValue = (unsigned char*) options->bytes;
+
+    bool pass = true;
+    for(int i = 0; i < options->count; i++) {
+        if(realValue[i] != expectedValue[i]) {
+            pass = false;
+            break;
+        }
+    }
+
+    return pass;
+}
 
 struct PtfPredicate ptfToEqualBytes(void* bytes, size_t count) {
     struct PtfEqualBytePredicateOptions *options = malloc(sizeof(struct PtfEqualBytePredicateOptions));
@@ -53,7 +57,8 @@ struct PtfPredicate ptfToEqualBytes(void* bytes, size_t count) {
 
     struct PtfPredicate predicate = {
             .options = options,
-            .execute = (struct PtfPredicateResult (*)(void*, void*)) ptfToEqualBytesPredicate,
+            .execute = (bool (*)(void*, void*)) ptfToEqualBytesPredicate,
+            .failMessage = (char *(*)(void *, void *, bool)) ptfToEqualBytesMessage,
     };
 
     return predicate;

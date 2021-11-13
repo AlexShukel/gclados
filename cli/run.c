@@ -97,10 +97,12 @@ char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
 
 int executeRun(struct RunCommandOptions* options) {
     if(options->pathCount > 0) {
-        struct ParsedTest tests[100];
-        size_t count = parseTestFile(options->paths[0], tests);
+        struct ParsedTestFile parsedFiles[options->pathCount];
 
-        char* testFile = buildTestFile(tests, count);
+        for(size_t i = 0; i < options->pathCount; ++i) {
+            parsedFiles[i] = parseTestFile(options->paths[i]);
+        }
+        char* testFile = buildTestFile(parsedFiles, options->pathCount);
 
         char* compiled = compileTestEntry(testFile, *options);
         fflush(stdout);

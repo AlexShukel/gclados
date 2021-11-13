@@ -112,13 +112,21 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, struc
     return currentTest;
 }
 
-size_t parseTestFile(char* path, struct ParsedTest *tests) {
+struct ParsedTestFile parseTestFile(char* path) {
     FILE* file = fopen(path, "r");
+
+    struct ParsedTest *tests = calloc(100, sizeof(struct ParsedTest));
 
     char buffer[testFileBufferSize];
     size_t bytesRead = fread(buffer, sizeof(char), testFileBufferSize, file);
 
     size_t count = processBuffer(buffer, bytesRead, tests);
 
-    return count;
+    struct ParsedTestFile testFile = {
+            .fileName = path,
+            .testCount = count,
+            .tests = tests,
+    };
+
+    return testFile;
 }

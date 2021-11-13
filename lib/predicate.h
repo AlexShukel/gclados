@@ -3,13 +3,9 @@
 
 #include <stdbool.h>
 
-struct PtfPredicateResult {
-    bool pass;
-    char* failMessage;
-};
-
 struct PtfPredicate {
-    struct PtfPredicateResult (*execute)(void* value, void* options);
+    bool (*execute)(void* value, void* options);
+    char* (*failMessage)(void* value, void* options, bool pass);
     void* options;
 };
 

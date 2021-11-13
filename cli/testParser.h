@@ -4,10 +4,16 @@
 #include <stdlib.h>
 
 struct ParsedTest {
-    char* name;
-    char* description;
+    char *name;
+    char *description;
 };
 
-size_t parseTestFile(char* path, struct ParsedTest *tests);
+struct ParsedTestFile {
+    char *fileName;
+    size_t testCount;
+    struct ParsedTest *tests;
+};
+
+struct ParsedTestFile parseTestFile(char* path);
 
 #endif
