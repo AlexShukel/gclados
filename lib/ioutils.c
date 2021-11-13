@@ -2,6 +2,39 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+void ptfPrintLineNumber(int number, bool highlight) {
+    printf("\n%c %3d | ", highlight ? '>' : ' ', number);
+}
+
+void ptfPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLine) {
+    if(lineBegin < 1 || lineEnd < 1) {
+        // TODO: call panic here
+    }
+
+    int currentCharacter, currentLine = 1;
+
+    while(currentCharacter = fgetc(file),
+            currentLine += (currentCharacter == '\n'),
+            currentLine < lineBegin && currentCharacter != EOF)
+        ;
+
+    ptfPrintLineNumber(currentLine, currentLine == highlightedLine);
+
+    while(currentCharacter = fgetc(file), currentLine <= lineEnd && currentCharacter != EOF) {
+        if(currentCharacter == '\n') {
+            if(++currentLine <= lineEnd) {
+                ptfPrintLineNumber(currentLine, currentLine == highlightedLine);
+            }
+        } else if(currentCharacter == '\r') {
+            continue;
+        } else {
+            putc(currentCharacter, stdout);
+        }
+    }
+
+    putc('\n', stdout);
+}
+
 void ptfPrintProgress(FILE* file, double percentage, size_t width) {
     size_t progressBufferLength = width + 3;
     char progressBuffer[width + progressBufferLength];

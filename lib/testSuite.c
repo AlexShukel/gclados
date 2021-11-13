@@ -16,12 +16,13 @@ struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest
     return suite;
 }
 
-bool ptfRunNextTest(struct PtfTestSuite *suite, struct PtfDynamicArray* results) {
+bool ptfRunNextTest(struct PtfTestSuite *suite) {
     if(suite->completedTestCount >= suite->testCount) {
         // TODO: add panic here
     }
 
-    ptfRunTest(suite->tests[suite->completedTestCount], results);
+    ptfRunTest(&suite->tests[suite->completedTestCount]);
+
     suite->completedTestCount += 1;
 
     return suite->completedTestCount == suite->testCount;
@@ -50,11 +51,17 @@ void printSuite(struct PtfTestSuite suite, bool minified) {
 
     printf("%s %s", status, suite.testSuiteName);
 
+    free(status);
+
     if(suite.status == PTF_RUNNING) {
         ptfPrintProgress(stdout, (double) (suite.completedTestCount + 1) / (double) suite.testCount, 5);
     }
 
     printf("\n");
 
-    free(status);
+    if(!minified && suite.status == PTF_FAILED) {
+        for(int i = 0; i < suite.testCount; ++i) {
+            ptfPrintTest(suite.tests[i]);
+        }
+    }
 }
