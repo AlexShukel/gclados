@@ -11,7 +11,7 @@ char *buildTestFile(struct ParsedTestFile* testFiles, size_t count) {
     char *filename = tmpNameExtended(".c");
 
     if(filename == NULL) {
-        // TODO: call panic here
+        ptfPanic("Could not create temporary file for tests entrypoint.");
     }
 
     FILE* outputFile = fopen(filename, "w");

@@ -8,6 +8,7 @@
 #include "testParser.h"
 #include "builder.h"
 #include "filenameUtils.h"
+#include "panic.h"
 
 struct RunCommandOptions {
     char** paths;
@@ -82,7 +83,7 @@ char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
     char* outputFile = tmpNameExtended("");
 
     if(outputFile == NULL) {
-        // TODO: add panic here
+        ptfPanic("Could not create temporary file for test executable.");
     }
 
     sprintf(commandBuffer + offset, " -o %s", outputFile);

@@ -6,6 +6,7 @@
 #include "test.h"
 #include "testSuite.h"
 #include "colors.h"
+#include "panic.h"
 
 void createPtfStatement(int line, char* filename, void* value, struct PtfPredicate predicate);
 void runPtfTestSuites(struct PtfTestSuite* suites, size_t count);
