@@ -24,5 +24,7 @@ struct PtfTest createPtfTest(void (*execute)(void), const char* description);
 void ptfAddStatementResult(struct PtfStatementResult result);
 void ptfRunTest(struct PtfTest *test);
 void ptfPrintTest(struct PtfTest test);
+void ptfFreeStatementResult(struct PtfStatementResult *result);
+void ptfFreeTest(struct PtfTest *test);
 
 #endif

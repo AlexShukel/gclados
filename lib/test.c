@@ -64,3 +64,17 @@ void ptfPrintTest(struct PtfTest test) {
         }
     }
 }
+
+void ptfFreeStatementResult(struct PtfStatementResult *result) {
+    free(result->failMessage);
+    free(result->filePath);
+    free(result);
+}
+
+void ptfFreeTest(struct PtfTest *test) {
+    for(size_t i = 0; i < test->statementResults.length; ++i) {
+        ptfFreeStatementResult(ptfGet(&test->statementResults, i));
+    }
+
+    ptfFreeDynamicArray(&test->statementResults);
+}

@@ -30,3 +30,8 @@ void ptfPush(struct PtfDynamicArray *array, void* element) {
     ptfSet(array, array->length, element);
     array->length += 1;
 }
+
+void ptfFreeDynamicArray(struct PtfDynamicArray *array) {
+    free(array->buffer);
+    free(array);
+}

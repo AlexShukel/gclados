@@ -35,4 +35,8 @@ void runPtfTestSuites(struct PtfTestSuite* suites, size_t count) {
     }
 
     ptfDrawSuites(suites, count, false);
+
+    for(size_t i = 0; i < count; ++i) {
+        ptfFreeTestSuite(&suites[i]);
+    }
 }

@@ -65,3 +65,13 @@ void printSuite(struct PtfTestSuite suite, bool minified) {
         }
     }
 }
+
+void ptfFreeTestSuite(struct PtfTestSuite *suite) {
+    for(size_t i = 0; i < suite->testCount; ++i) {
+        ptfFreeTest(&suite->tests[i]);
+    }
+
+    free(suite->testSuiteName);
+    free(suite->tests);
+    free(suite);
+}

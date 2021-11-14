@@ -25,5 +25,6 @@ struct PtfTestSuite {
 struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount);
 void printSuite(struct PtfTestSuite suite, bool minified);
 bool ptfRunNextTest(struct PtfTestSuite *suite);
+void ptfFreeTestSuite(struct PtfTestSuite *suite);
 
 #endif
