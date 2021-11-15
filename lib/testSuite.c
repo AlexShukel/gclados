@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "ioutils.h"
+#include "panic.h"
 
 struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount) {
     struct PtfTestSuite suite = {
@@ -18,7 +19,7 @@ struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest
 
 bool ptfRunNextTest(struct PtfTestSuite *suite) {
     if(suite->completedTestCount >= suite->testCount) {
-        // TODO: add panic here
+        ptfPanic("Trying to run more tests than actually exist.");
     }
 
     ptfRunTest(&suite->tests[suite->completedTestCount]);
@@ -71,7 +72,7 @@ void ptfFreeTestSuite(struct PtfTestSuite *suite) {
         ptfFreeTest(&suite->tests[i]);
     }
 
-    free(suite->testSuiteName);
+    free((void*) suite->testSuiteName);
     free(suite->tests);
     free(suite);
 }

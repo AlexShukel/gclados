@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "panic.h"
 #include "colors.h"
 #include "test.h"
 

@@ -1,6 +1,7 @@
 #include "ioutils.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "panic.h"
 
 void ptfPrintLineNumber(int number, bool highlight) {
     printf("\n%c %3d | ", highlight ? '>' : ' ', number);
@@ -8,7 +9,7 @@ void ptfPrintLineNumber(int number, bool highlight) {
 
 void ptfPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLine) {
     if(lineBegin < 1 || lineEnd < 1) {
-        // TODO: call panic here
+        ptfPanic("Begin and end lines should be not less than 1");
     }
 
     int currentCharacter, currentLine = 1;
@@ -33,6 +34,11 @@ void ptfPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLi
     }
 
     putc('\n', stdout);
+
+    if(lineBegin <= lineEnd) {
+        ptfPanic("Incomplete file segment was printed - end of file was reached"
+                 " or an unexpected error occurred.");
+    }
 }
 
 void ptfPrintProgress(FILE* file, double percentage, size_t width) {
