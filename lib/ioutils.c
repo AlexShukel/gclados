@@ -35,7 +35,7 @@ void ptfPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLi
 
     putc('\n', stdout);
 
-    if(lineBegin <= lineEnd) {
+    if(currentLine < lineEnd) {
         ptfPanic("Incomplete file segment was printed - end of file was reached"
                  " or an unexpected error occurred.");
     }
