@@ -1,6 +1,9 @@
 #include "predicateNamespace.h"
 
-struct PtfPredicateNamespace ptf = {
-        .toEqualInt = ptfToEqualInt,
-        .toEqualBytes = ptfToEqualBytes,
+#include "intPredicates.h"
+#include "bytePredicates.h"
+
+GcladosPredicateNamespace gclados = {
+        .toEqualInt = gcladosToEqualInt,
+        .toEqualBytes = gcladosToEqualBytes,
 };

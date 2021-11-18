@@ -1,5 +1,5 @@
 #include "sum.h"
-#include "ptf.h"
+#include "gclados.h"
 
 int currentTEST(int asdf) {
     return 0;
@@ -15,7 +15,7 @@ TEST(test0) {
 // Should be equal to bytes
 TEST(test1) {
     unsigned short value = 65535;
-    ensure(-65535, ptf.toEqualBytes(&value, sizeof(short)));
+    ensure(-65535, gclados.toEqualBytes(&value, sizeof(short)));
 }
 /*
 int main() {

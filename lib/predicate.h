@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-struct PtfPredicate {
+typedef struct {
     bool (*execute)(void* value, void* options);
     char* (*failMessage)(void* value, void* options, bool pass);
     void* options;
-};
+} GcladosPredicate;
 
 #endif

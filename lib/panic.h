@@ -1,7 +1,6 @@
-#ifndef __PTF_PANIC_H__
-#define __PTF_PANIC_H__
+#ifndef GCLADOS_PANIC_H
+#define GCLADOS_PANIC_H
 
-void ptfSetProgramName(char* name);
-void ptfPanic(char* message);
+void gcladosPanic(char* message);
 
 #endif

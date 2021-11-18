@@ -1,31 +1,31 @@
-#ifndef __PTF_COLORS_H__
-#define __PTF_COLORS_H__
+#ifndef GCLADOS_COLORS_H
+#define GCLADOS_COLORS_H
 
 #include <stdbool.h>
 
-struct PtfAnsiFlags {
+typedef struct {
         int* flags;
         int count;
-};
+} GcladosAnsiFlags;
 
-enum PtfColor {
-    PTF_BLACK = 0,
-    PTF_RED,
-    PTF_GREEN,
-    PTF_YELLOW,
-    PTF_BLUE,
-    PTF_MAGENTA,
-    PTF_CYAN,
-    PTF_WHITE,
-};
+typedef enum {
+    GCLADOS_BLACK = 0,
+    GCLADOS_RED,
+    GCLADOS_GREEN,
+    GCLADOS_YELLOW,
+    GCLADOS_BLUE,
+    GCLADOS_MAGENTA,
+    GCLADOS_CYAN,
+    GCLADOS_WHITE,
+} GcladosColor;
 
-struct PtfColors {
+typedef struct {
     void (*setColorsSupported)(bool colorSupport);
     bool (*colorsSupported)();
-    struct PtfAnsiFlags (*createFlags)(int count, ...);
-    char* (*applyFlags)(char* input, struct PtfAnsiFlags);
-    int (*foregroundColor)(enum PtfColor color);
-    int (*backgroundColor)(enum PtfColor color);
+    GcladosAnsiFlags (*createFlags)(int count, ...);
+    char* (*applyFlags)(char* input, GcladosAnsiFlags);
+    int (*foregroundColor)(GcladosColor color);
+    int (*backgroundColor)(GcladosColor color);
     int (*bold)();
     int (*dimmed)();
     int (*italic)();
@@ -33,8 +33,8 @@ struct PtfColors {
     int (*invert)();
     int (*strikethrough)();
     int (*framed)();
-};
+} GcladosColors;
 
-extern struct PtfColors ptfColors;
+extern GcladosColors gcladosColors;
 
 #endif

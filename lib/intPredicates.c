@@ -1,8 +1,12 @@
 #include "intPredicates.h"
-#include "stdlib.h"
-#include "stdio.h"
 
-char *ptfIntToString(int a) {
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "colors.h"
+#include "ioutils.h"
+
+char *gcladosIntToString(int a) {
     char *str = calloc(20, sizeof(char));
 
     sprintf(str, "%d", a);
@@ -10,11 +14,11 @@ char *ptfIntToString(int a) {
     return str;
 }
 
-char *ptfToEqualIntMessage(const int *options, void *value, bool pass) {
-    char *expectedValueAsString = ptfIntToString(*options);
-    char *receivedValueAsString = ptfIntToString(*((int*) value));
+char *gcladosToEqualIntMessage(const int *options, void *value, bool pass) {
+    char *expectedValueAsString = gcladosIntToString(*options);
+    char *receivedValueAsString = gcladosIntToString(*((int*) value));
 
-    char *message = ptfStandardErrorMessage(pass, "ptf.toEqualInt(%s)", expectedValueAsString, receivedValueAsString);
+    char *message = gcladosStandardErrorMessage(pass, "gclados.toEqualInt(%s)", expectedValueAsString, receivedValueAsString);
 
     free(expectedValueAsString);
     free(receivedValueAsString);
@@ -22,17 +26,17 @@ char *ptfToEqualIntMessage(const int *options, void *value, bool pass) {
     return message;
 }
 
-bool ptfToEqualIntPredicate(void* value, const int* options) {
+bool gcladosToEqualIntPredicate(void* value, const int* options) {
     return *((int*) value) == *options;
 };
 
-struct PtfPredicate ptfToEqualInt(int value) {
+GcladosPredicate gcladosToEqualInt(int value) {
     int *options = malloc(sizeof(int));
     *options = value;
-    struct PtfPredicate predicate = {
+    GcladosPredicate predicate = {
             .options = options,
-            .execute = (bool (*)(void*, void*)) ptfToEqualIntPredicate,
-            .failMessage = (char *(*)(void *, void *, bool)) ptfToEqualIntMessage,
+            .execute = (bool (*)(void*, void*)) gcladosToEqualIntPredicate,
+            .failMessage = (char *(*)(void *, void *, bool)) gcladosToEqualIntMessage,
     };
 
     return predicate;

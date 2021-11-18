@@ -1,7 +1,7 @@
 #include "sum.h"
-#include "ptf.h"
+#include "gclados.h"
 
 int sum(int a, int b) {
-    ensure(3, ptf.toEqualInt(2));
+    ensure(3, gclados.toEqualInt(2));
     return a + b;
 }

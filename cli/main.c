@@ -3,7 +3,7 @@
 #include "help.h"
 #include "run.h"
 #include <string.h>
-#include "ptf.h"
+#include "gclados.h"
 
 /*bool isKnownCommand(char* command) {
     return strcmp(helpCmd.slug, command) == 0;

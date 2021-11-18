@@ -83,7 +83,7 @@ char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
     char* outputFile = tmpNameExtended("");
 
     if(outputFile == NULL) {
-        ptfPanic("Could not create temporary file for test executable.");
+        gcladosPanic("Could not create temporary file for test executable.");
     }
 
     sprintf(commandBuffer + offset, " -o %s", outputFile);

@@ -1,19 +1,19 @@
-#ifndef __PTF_DYNAMIC_ARRAY_H__
-#define __PTF_DYNAMIC_ARRAY_H__
+#ifndef GCLADOS_DYNAMIC_ARRAY_H
+#define GCLADOS_DYNAMIC_ARRAY_H
 
-#include "stdlib.h"
+#include <stdlib.h>
 
-struct PtfDynamicArray {
+typedef struct {
     size_t elementSize;
     char* buffer;
     size_t capacity;
     size_t length;
-};
+} GcladosDynamicArray;
 
-struct PtfDynamicArray createPtfDynamicArray(size_t elementSize);
-void *ptfGet(struct PtfDynamicArray *array, size_t index);
-void ptfPush(struct PtfDynamicArray *array, void* element);
-void ptfSet(struct PtfDynamicArray *array, size_t index, void* element);
-void ptfFreeDynamicArray(struct PtfDynamicArray *array);
+GcladosDynamicArray gcladosCreateDynamicArray(size_t elementSize);
+void *gcladosGet(GcladosDynamicArray *array, size_t index);
+void gcladosPush(GcladosDynamicArray *array, void* element);
+void gcladosSet(GcladosDynamicArray *array, size_t index, void* element);
+void gcladosFreeDynamicArray(GcladosDynamicArray *array);
 
 #endif

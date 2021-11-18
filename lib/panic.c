@@ -20,18 +20,18 @@
 #include <execinfo.h>
 #endif
 
-void ptfPrintBacktrace(FILE* file);
+void gcladosPrintBacktrace(FILE* file);
 
-void ptfPanic(char* message) {
+void gcladosPanic(char* message) {
     fflush(stdout);
     fflush(stderr);
     fprintf(stderr, "Ptf panicked: %s\n", message);
-    ptfPrintBacktrace(stderr);
+    gcladosPrintBacktrace(stderr);
     exit(1);
 }
 
 #if defined(OS_WINDOWS)
-void ptfPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE* file) {
     /* TODO: implement backtrace for windows
     SymInitialize(GetCurrentProcess(), NULL, TRUE);
     CONTEXT context;
@@ -89,7 +89,7 @@ void ptfPrintBacktrace(FILE* file) {
      */
 }
 #elif defined(OS_LINUX)
-void ptfPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE* file) {
     void *backtraceBuffer[1024];
     int backtraceSize = backtrace(backtraceBuffer, 1024);
     char** backtraceSymbols = backtrace_symbols(backtraceBuffer, backtraceSize);
@@ -99,7 +99,7 @@ void ptfPrintBacktrace(FILE* file) {
     }
 }
 #elif
-void ptfPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE* file) {
     // Do nothing - system is not supported.
 }
 #endif

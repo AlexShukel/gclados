@@ -1,30 +1,29 @@
-#ifndef __PTF_TEST_SUITE_H__
-#define __PTF_TEST_SUITE_H__
+#ifndef GCLADOS_TEST_SUITE_H
+#define GCLADOS_TEST_SUITE_H
 
-#include <stdlib.h>
 #include <stdbool.h>
-#include "colors.h"
+
 #include "test.h"
 
-enum PtfTestSuiteStatus {
+typedef enum {
     PTF_PASS,
     PTF_FAILED,
     PTF_WAITING,
     PTF_RUNNING,
     PTF_SKIP,
-};
+} GcladosTestSuiteStatus;
 
-struct PtfTestSuite {
-    const char* testSuiteName;
-    struct PtfTest* tests;
+typedef struct {
+    const char *testSuiteName;
+    GcladosTest *tests;
     size_t testCount;
     size_t completedTestCount;
-    enum PtfTestSuiteStatus status;
-};
+    GcladosTestSuiteStatus status;
+} GcladosTestSuite;
 
-struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount);
-void printSuite(struct PtfTestSuite suite, bool minified);
-bool ptfRunNextTest(struct PtfTestSuite *suite);
-void ptfFreeTestSuite(struct PtfTestSuite *suite);
+GcladosTestSuite gcladosCreateTestSuite(const char *testSuiteName, GcladosTest *tests, size_t testCount);
+void gcladosPrintSuite(GcladosTestSuite suite, bool minified);
+bool gcladosRunNextTest(GcladosTestSuite *suite);
+void gcladosFreeTestSuite(GcladosTestSuite *suite);
 
 #endif

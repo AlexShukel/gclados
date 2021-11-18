@@ -1,15 +1,15 @@
-#ifndef __PTF_PREDICATE_NAMESPACE_H__
-#define __PTF_PREDICATE_NAMESPACE_H__
+#ifndef GCLADOS_PREDICATE_NAMESPACE_H
+#define GCLADOS_PREDICATE_NAMESPACE_H
+
+#include <stdlib.h>
 
 #include "predicate.h"
-#include "intPredicates.h"
-#include "bytePredicates.h"
 
-struct PtfPredicateNamespace {
-    struct PtfPredicate (*toEqualInt)(int value);
-    struct PtfPredicate (*toEqualBytes)(void* bytes, size_t size);
-};
+typedef struct {
+    GcladosPredicate (*toEqualInt)(int value);
+    GcladosPredicate (*toEqualBytes)(void* bytes, size_t size);
+} GcladosPredicateNamespace;
 
-extern struct PtfPredicateNamespace ptf;
+extern GcladosPredicateNamespace gclados;
 
 #endif

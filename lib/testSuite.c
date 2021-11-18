@@ -4,9 +4,10 @@
 
 #include "ioutils.h"
 #include "panic.h"
+#include "colors.h"
 
-struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest* tests, size_t testCount) {
-    struct PtfTestSuite suite = {
+GcladosTestSuite gcladosCreateTestSuite(const char *testSuiteName, GcladosTest *tests, size_t testCount) {
+    GcladosTestSuite suite = {
             .testSuiteName = testSuiteName,
             .tests = tests,
             .testCount = testCount,
@@ -17,36 +18,36 @@ struct PtfTestSuite createPtfTestSuite(const char* testSuiteName, struct PtfTest
     return suite;
 }
 
-bool ptfRunNextTest(struct PtfTestSuite *suite) {
+bool gcladosRunNextTest(GcladosTestSuite *suite) {
     if(suite->completedTestCount >= suite->testCount) {
-        ptfPanic("Trying to run more tests than actually exist.");
+        gcladosPanic("Trying to run more tests than actually exist.");
     }
 
-    ptfRunTest(&suite->tests[suite->completedTestCount]);
+    gcladosRunTest(&suite->tests[suite->completedTestCount]);
 
     suite->completedTestCount += 1;
 
     return suite->completedTestCount == suite->testCount;
 }
 
-void printSuite(struct PtfTestSuite suite, bool minified) {
+void gcladosPrintSuite(GcladosTestSuite suite, bool minified) {
     char* status;
 
     switch(suite.status) {
         case PTF_WAITING:
-            status = ptfColors.applyFlags(" WAIT ", ptfColors.createFlags(2, ptfColors.foregroundColor(PTF_YELLOW), ptfColors.framed()));
+            status = gcladosColors.applyFlags(" WAIT ", gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_YELLOW), gcladosColors.framed()));
             break;
         case PTF_RUNNING:
-            status = ptfColors.applyFlags(" RUNS ", ptfColors.createFlags(2, ptfColors.foregroundColor(PTF_CYAN), ptfColors.framed()));
+            status = gcladosColors.applyFlags(" RUNS ", gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_CYAN), gcladosColors.framed()));
             break;
         case PTF_FAILED:
-            status = ptfColors.applyFlags(" FAIL ", ptfColors.createFlags(2, ptfColors.foregroundColor(PTF_BLACK), ptfColors.backgroundColor(PTF_RED)));
+            status = gcladosColors.applyFlags(" FAIL ", gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_BLACK), gcladosColors.backgroundColor(GCLADOS_RED)));
             break;
         case PTF_PASS:
-            status = ptfColors.applyFlags(" PASS ", ptfColors.createFlags(1, ptfColors.backgroundColor(PTF_GREEN)));
+            status = gcladosColors.applyFlags(" PASS ", gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_GREEN)));
             break;
         case PTF_SKIP:
-            status = ptfColors.applyFlags(" SKIP ", ptfColors.createFlags(1, ptfColors.backgroundColor(PTF_YELLOW)));
+            status = gcladosColors.applyFlags(" SKIP ", gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_YELLOW)));
             break;
     }
 
@@ -55,21 +56,21 @@ void printSuite(struct PtfTestSuite suite, bool minified) {
     free(status);
 
     if(suite.status == PTF_RUNNING) {
-        ptfPrintProgress(stdout, (double) (suite.completedTestCount + 1) / (double) suite.testCount, 5);
+        gcladosPrintProgress(stdout, (double) (suite.completedTestCount + 1) / (double) suite.testCount, 5);
     }
 
     printf("\n");
 
     if(!minified && suite.status == PTF_FAILED) {
         for(int i = 0; i < suite.testCount; ++i) {
-            ptfPrintTest(suite.tests[i]);
+            gcladosPrintTest(suite.tests[i]);
         }
     }
 }
 
-void ptfFreeTestSuite(struct PtfTestSuite *suite) {
+void gcladosFreeTestSuite(GcladosTestSuite *suite) {
     for(size_t i = 0; i < suite->testCount; ++i) {
-        ptfFreeTest(&suite->tests[i]);
+        gcladosFreeTest(&suite->tests[i]);
     }
 
     free((void*) suite->testSuiteName);

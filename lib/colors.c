@@ -1,34 +1,35 @@
 #include "colors.h"
+
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-bool PTF_SUPPORTED_COLORS = true;
+bool GCLADOS_SUPPORTED_COLORS = true;
 
 // ANSI codes taken from https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
-const int PTF_FOREGROUND_COLOR_OFFSET = 30;
-const int PTF_BACKGROUND_COLOR_OFFSET = 40;
-const int PTF_RESET = 0;
-const int PTF_BOLD = 1;
-const int PTF_DIMMED = 2;
-const int PTF_ITALIC = 3;
-const int PTF_UNDERLINE = 4;
-const int PTF_INVERT = 7;
-const int PTF_STRIKETHROUGH = 9;
-const int PTF_FRAMED = 51;
+const int GCLADOS_FOREGROUND_COLOR_OFFSET = 30;
+const int GCLADOS_BACKGROUND_COLOR_OFFSET = 40;
+const int GCLADOS_RESET = 0;
+const int GCLADOS_BOLD = 1;
+const int GCLADOS_DIMMED = 2;
+const int GCLADOS_ITALIC = 3;
+const int GCLADOS_UNDERLINE = 4;
+const int GCLADOS_INVERT = 7;
+const int GCLADOS_STRIKETHROUGH = 9;
+const int GCLADOS_FRAMED = 51;
 
-void ptfSetColorsSupported(bool supported) {
-    PTF_SUPPORTED_COLORS = supported;
+void gcladosSetColorsSupported(bool supported) {
+    GCLADOS_SUPPORTED_COLORS = supported;
 }
 
-bool ptfColorsSupported() {
-    return PTF_SUPPORTED_COLORS;
+bool gcladosColorsSupported() {
+    return GCLADOS_SUPPORTED_COLORS;
 }
 
-char* ptfApplyAnsiFlags(char* string, struct PtfAnsiFlags flags) {
-    if(!ptfColorsSupported()) {
+char* gcladosApplyAnsiFlags(char* string, GcladosAnsiFlags flags) {
+    if(!gcladosColorsSupported()) {
         return string;
     }
 
@@ -40,12 +41,12 @@ char* ptfApplyAnsiFlags(char* string, struct PtfAnsiFlags flags) {
         currentOffset += sprintf(newString + currentOffset, "%02d%c", flags.flags[i], i != flags.count - 1 ? ';' : 'm');
     }
 
-    sprintf(newString + currentOffset, "%s\x1b[%dm", string, PTF_RESET);
+    sprintf(newString + currentOffset, "%s\x1b[%dm", string, GCLADOS_RESET);
 
     return newString;
 }
 
-struct PtfAnsiFlags ptfCreateAnsiFlags(int count, ...) {
+GcladosAnsiFlags gcladosCreateAnsiFlags(int count, ...) {
     int *flags = calloc(count, sizeof(int));
 
     va_list list;
@@ -57,7 +58,7 @@ struct PtfAnsiFlags ptfCreateAnsiFlags(int count, ...) {
 
     va_end(list);
 
-    struct PtfAnsiFlags output = {
+    GcladosAnsiFlags output = {
             .flags = flags,
             .count = count
     };
@@ -65,54 +66,54 @@ struct PtfAnsiFlags ptfCreateAnsiFlags(int count, ...) {
     return output;
 }
 
-int ptfForegroundColor(enum PtfColor color) {
-    return (int) (PTF_FOREGROUND_COLOR_OFFSET + color);
+int gcladosForegroundColor(GcladosColor color) {
+    return (int) (GCLADOS_FOREGROUND_COLOR_OFFSET + color);
 }
 
-int ptfBackgroundColor(enum PtfColor color) {
-    return (int)(PTF_BACKGROUND_COLOR_OFFSET + color);
+int gcladosBackgroundColor(GcladosColor color) {
+    return (int)(GCLADOS_BACKGROUND_COLOR_OFFSET + color);
 }
 
-int ptfBold() {
-    return PTF_BOLD;
+int gcladosBold() {
+    return GCLADOS_BOLD;
 }
 
-int ptfDimmed() {
-    return PTF_DIMMED;
+int gcladosDimmed() {
+    return GCLADOS_DIMMED;
 }
 
-int ptfItalic() {
-    return PTF_ITALIC;
+int gcladosItalic() {
+    return GCLADOS_ITALIC;
 }
 
-int ptfUnderline() {
-    return PTF_UNDERLINE;
-};
-
-int ptfInvert() {
-    return PTF_INVERT;
+int gcladosUnderline() {
+    return GCLADOS_UNDERLINE;
 }
 
-int ptfStrikethrough() {
-    return PTF_STRIKETHROUGH;
+int gcladosInvert() {
+    return GCLADOS_INVERT;
 }
 
-int ptfFramed() {
-    return PTF_FRAMED;
+int gcladosStrikethrough() {
+    return GCLADOS_STRIKETHROUGH;
 }
 
-struct PtfColors ptfColors = {
-        .setColorsSupported = ptfSetColorsSupported,
-        .colorsSupported = ptfColorsSupported,
-        .createFlags = ptfCreateAnsiFlags,
-        .applyFlags = ptfApplyAnsiFlags,
-        .foregroundColor = ptfForegroundColor,
-        .backgroundColor = ptfBackgroundColor,
-        .bold = ptfBold,
-        .dimmed = ptfDimmed,
-        .italic = ptfItalic,
-        .underline = ptfUnderline,
-        .invert = ptfInvert,
-        .strikethrough = ptfStrikethrough,
-        .framed = ptfFramed,
+int gcladosFramed() {
+    return GCLADOS_FRAMED;
+}
+
+GcladosColors gcladosColors = {
+        .setColorsSupported = gcladosSetColorsSupported,
+        .colorsSupported = gcladosColorsSupported,
+        .createFlags = gcladosCreateAnsiFlags,
+        .applyFlags = gcladosApplyAnsiFlags,
+        .foregroundColor = gcladosForegroundColor,
+        .backgroundColor = gcladosBackgroundColor,
+        .bold = gcladosBold,
+        .dimmed = gcladosDimmed,
+        .italic = gcladosItalic,
+        .underline = gcladosUnderline,
+        .invert = gcladosInvert,
+        .strikethrough = gcladosStrikethrough,
+        .framed = gcladosFramed,
 };

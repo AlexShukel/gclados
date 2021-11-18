@@ -1,10 +1,8 @@
-#ifndef __PTF_INT_PREDICATES_H__
-#define __PTF_INT_PREDICATES_H__
+#ifndef GCLADOS_INT_PREDICATES_H
+#define GCLADOS_INT_PREDICATES_H
 
 #include "predicate.h"
-#include "colors.h"
-#include "ioutils.h"
 
-struct PtfPredicate ptfToEqualInt(int value);
+GcladosPredicate gcladosToEqualInt(int value);
 
 #endif

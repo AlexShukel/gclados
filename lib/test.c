@@ -5,30 +5,30 @@
 #include "colors.h"
 #include "ioutils.h"
 
-struct PtfTest createPtfTest(void (*executor)(), const char* description) {
-    struct PtfTest test = {
+GcladosTest gcladosCreateTest(void (*executor)(), const char* description) {
+    GcladosTest test = {
             .execute = executor,
             .description = description,
-            .statementResults = createPtfDynamicArray(sizeof(struct PtfStatementResult)),
+            .statementResults = gcladosCreateDynamicArray(sizeof(GcladosStatementResult)),
             .pass = false,
     };
 
     return test;
 }
 
-struct PtfDynamicArray* currentResults;
+GcladosDynamicArray* currentResults;
 
-void ptfAddStatementResult(struct PtfStatementResult result) {
-    ptfPush(currentResults, &result);
+void gcladosAddStatementResult(GcladosStatementResult result) {
+    gcladosPush(currentResults, &result);
 }
 
-void ptfRunTest(struct PtfTest *test) {
+void gcladosRunTest(GcladosTest *test) {
     currentResults = &test->statementResults;
     test->execute();
     test->pass = true;
 
     for(size_t i = 0; i < test->statementResults.length; ++i) {
-        struct PtfStatementResult *result = ptfGet(&test->statementResults, i);
+        GcladosStatementResult *result = gcladosGet(&test->statementResults, i);
 
         if(result->pass == false) {
             test->pass = false;
@@ -38,26 +38,32 @@ void ptfRunTest(struct PtfTest *test) {
     }
 }
 
-void ptfPrintTest(struct PtfTest test) {
+void gcladosPrintTest(GcladosTest test) {
     char* status = test.pass ?
-            ptfColors.applyFlags("v", ptfColors.createFlags(2, ptfColors.foregroundColor(PTF_GREEN), ptfColors.bold())) :
-            ptfColors.applyFlags("x", ptfColors.createFlags(2, ptfColors.foregroundColor(PTF_RED), ptfColors.bold()));
+            gcladosColors.applyFlags("v",
+                                     gcladosColors.createFlags(2,
+                                                               gcladosColors.foregroundColor(GCLADOS_GREEN),
+                                                               gcladosColors.bold())) :
+            gcladosColors.applyFlags("x",
+                                     gcladosColors.createFlags(2,
+                                                               gcladosColors.foregroundColor(GCLADOS_RED),
+                                                               gcladosColors.bold()));
     printf("  %s  %s\n", status, test.description);
 
     free(status);
 
     if(!test.pass) {
         for(size_t i = 0; i < test.statementResults.length; ++i) {
-            struct PtfStatementResult *result = ptfGet(&test.statementResults, i);
+            GcladosStatementResult *result = gcladosGet(&test.statementResults, i);
 
             if(!result->pass) {
                 printf("\n%s\n", result->failMessage);
 
                 FILE* testFile = fopen(result->filePath, "r");
 
-                ptfPrintFileLines(testFile, result->line - 2, result->line + 2, result->line);
+                gcladosPrintFileLines(testFile, result->line - 2, result->line + 2, result->line);
                 fclose(testFile);
-                char* coloredFile = ptfColors.applyFlags(result->filePath, ptfColors.createFlags(1, ptfColors.foregroundColor(PTF_CYAN)));
+                char* coloredFile = gcladosColors.applyFlags(result->filePath, gcladosColors.createFlags(1, gcladosColors.foregroundColor(GCLADOS_CYAN)));
                 printf("    in file %s\n\n", coloredFile);
                 free(coloredFile);
             }
@@ -65,16 +71,16 @@ void ptfPrintTest(struct PtfTest test) {
     }
 }
 
-void ptfFreeStatementResult(struct PtfStatementResult *result) {
+void gcladosFreeStatementResult(GcladosStatementResult *result) {
     free(result->failMessage);
     free(result->filePath);
     free(result);
 }
 
-void ptfFreeTest(struct PtfTest *test) {
+void gcladosFreeTest(GcladosTest *test) {
     for(size_t i = 0; i < test->statementResults.length; ++i) {
-        ptfFreeStatementResult(ptfGet(&test->statementResults, i));
+        gcladosFreeStatementResult(gcladosGet(&test->statementResults, i));
     }
 
-    ptfFreeDynamicArray(&test->statementResults);
+    gcladosFreeDynamicArray(&test->statementResults);
 }

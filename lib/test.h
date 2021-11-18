@@ -1,30 +1,30 @@
-#ifndef __PTF_TEST_H__
-#define __PTF_TEST_H__
+#ifndef GCLADOS_TEST_H
+#define GCLADOS_TEST_H
 
 #include <stdbool.h>
 
 #include "dynamicArray.h"
 
-struct PtfStatementResult {
+typedef struct {
     bool pass;
     char* failMessage;
     int line;
     char* filePath;
-};
+} GcladosStatementResult;
 
-struct PtfTest {
+typedef struct {
     void (*execute)(void);
     const char* description;
-    struct PtfDynamicArray statementResults;
+    GcladosDynamicArray statementResults;
     bool pass;
-};
+} GcladosTest;
 
-struct PtfTest createPtfTest(void (*execute)(void), const char* description);
+GcladosTest gcladosCreateTest(void (*execute)(void), const char* description);
 
-void ptfAddStatementResult(struct PtfStatementResult result);
-void ptfRunTest(struct PtfTest *test);
-void ptfPrintTest(struct PtfTest test);
-void ptfFreeStatementResult(struct PtfStatementResult *result);
-void ptfFreeTest(struct PtfTest *test);
+void gcladosAddStatementResult(GcladosStatementResult result);
+void gcladosRunTest(GcladosTest *test);
+void gcladosPrintTest(GcladosTest test);
+void gcladosFreeStatementResult(GcladosStatementResult *result);
+void gcladosFreeTest(GcladosTest *test);
 
 #endif

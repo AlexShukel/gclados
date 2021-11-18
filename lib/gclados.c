@@ -1,25 +1,25 @@
-#include "ptf.h"
+#include "gclados.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void ptfDrawSuites(struct PtfTestSuite* suites, size_t count, bool minified) {
+void gcladosDrawSuites(GcladosTestSuite *suites, size_t count, bool minified) {
     fflush(stdout);
     // Clear screen
     printf("\033c");
 
     for(int i = 0; i < count; i++) {
-        printSuite(suites[i], minified);
+        gcladosPrintSuite(suites[i], minified);
     }
 }
 
-void runPtfTestSuites(struct PtfTestSuite* suites, size_t count) {
+void gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
     size_t completedTestSuites = 0;
 
     while(completedTestSuites < count) {
         suites[completedTestSuites].status = PTF_RUNNING;
-        ptfDrawSuites(suites, count, true);
-        if(ptfRunNextTest(&suites[completedTestSuites])) {
+        gcladosDrawSuites(suites, count, true);
+        if(gcladosRunNextTest(&suites[completedTestSuites])) {
             bool pass = true;
             for(size_t i = 0; i < suites[completedTestSuites].testCount; ++i) {
                 if(suites[completedTestSuites].tests[i].pass == false) {
@@ -34,9 +34,9 @@ void runPtfTestSuites(struct PtfTestSuite* suites, size_t count) {
         }
     }
 
-    ptfDrawSuites(suites, count, false);
+    gcladosDrawSuites(suites, count, false);
 
     for(size_t i = 0; i < count; ++i) {
-        ptfFreeTestSuite(&suites[i]);
+        gcladosFreeTestSuite(&suites[i]);
     }
 }

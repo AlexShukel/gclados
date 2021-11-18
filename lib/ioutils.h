@@ -1,12 +1,11 @@
-#ifndef __PTF_IO_UTILS_H__
-#define __PTF_IO_UTILS_H__
+#ifndef GCLADOS_IO_UTILS_H
+#define GCLADOS_IO_UTILS_H
 
 #include <stdbool.h>
 #include <stdio.h>
-#include "colors.h"
 
-char* ptfStandardErrorMessage(bool pass, char* usage, char* expected, char* received);
-void ptfPrintProgress(FILE* file, double percentage, size_t width);
-void ptfPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLine);
+char* gcladosStandardErrorMessage(bool pass, char* usage, char* expected, char* received);
+void gcladosPrintProgress(FILE* file, double percentage, size_t width);
+void gcladosPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLine);
 
 #endif

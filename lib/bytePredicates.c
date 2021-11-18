@@ -1,12 +1,15 @@
 #include "bytePredicates.h"
-#include "stdlib.h"
 
-struct PtfEqualBytePredicateOptions {
+#include <stdlib.h>
+
+#include "ioutils.h"
+
+typedef struct GcladosEqualBytePredicateOptions {
     void* bytes;
     size_t count;
-};
+} GcladosEqualBytePredicateOptions;
 
-char *ptfToEqualBytesMessage(void* value, const struct PtfEqualBytePredicateOptions* options, bool pass) {
+char *gcladosToEqualBytesMessage(void* value, const GcladosEqualBytePredicateOptions* options, bool pass) {
     unsigned char* realValue = (unsigned char*) value;
     unsigned char* expectedValue = (unsigned char*) options->bytes;
 
@@ -26,7 +29,7 @@ char *ptfToEqualBytesMessage(void* value, const struct PtfEqualBytePredicateOpti
         expectedValueAsHex[i + 3] = valueToHex[expectedValue[i / 2] % 16];
     }
 
-    char* message = ptfStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
+    char* message = gcladosStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
 
     free(realValueAsHex);
     free(expectedValueAsHex);
@@ -34,7 +37,7 @@ char *ptfToEqualBytesMessage(void* value, const struct PtfEqualBytePredicateOpti
     return message;
 }
 
-bool ptfToEqualBytesPredicate(void* value, const struct PtfEqualBytePredicateOptions* options) {
+bool gcladosToEqualBytesPredicate(void* value, const GcladosEqualBytePredicateOptions* options) {
     unsigned char* realValue = (unsigned char*) value;
     unsigned char* expectedValue = (unsigned char*) options->bytes;
 
@@ -49,16 +52,16 @@ bool ptfToEqualBytesPredicate(void* value, const struct PtfEqualBytePredicateOpt
     return pass;
 }
 
-struct PtfPredicate ptfToEqualBytes(void* bytes, size_t count) {
-    struct PtfEqualBytePredicateOptions *options = malloc(sizeof(struct PtfEqualBytePredicateOptions));
+GcladosPredicate gcladosToEqualBytes(void* bytes, size_t count) {
+    GcladosEqualBytePredicateOptions *options = malloc(sizeof(GcladosEqualBytePredicateOptions));
 
     options->bytes = bytes;
     options->count = count;
 
-    struct PtfPredicate predicate = {
+    GcladosPredicate predicate = {
             .options = options,
-            .execute = (bool (*)(void*, void*)) ptfToEqualBytesPredicate,
-            .failMessage = (char *(*)(void *, void *, bool)) ptfToEqualBytesMessage,
+            .execute = (bool (*)(void*, void*)) gcladosToEqualBytesPredicate,
+            .failMessage = (char *(*)(void *, void *, bool)) gcladosToEqualBytesMessage,
     };
 
     return predicate;

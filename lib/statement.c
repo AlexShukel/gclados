@@ -1,11 +1,13 @@
 #include "statement.h"
-#include "stdio.h"
-#include "stdlib.h"
 
-void createPtfStatement(int line, char* filePath, void* value, struct PtfPredicate predicate) {
+#include <stdlib.h>
+
+#include "test.h"
+
+void gcladosCreateStatement(int line, char* filePath, void* value, GcladosPredicate predicate) {
     bool pass = predicate.execute(value, predicate.options);
 
-    struct PtfStatementResult result = {
+    GcladosStatementResult result = {
             .pass = pass,
             .failMessage = NULL,
             .line = line,
@@ -20,5 +22,5 @@ void createPtfStatement(int line, char* filePath, void* value, struct PtfPredica
 
     free(predicate.options);
 
-    ptfAddStatementResult(result);
+    gcladosAddStatementResult(result);
 }
