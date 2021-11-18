@@ -10,19 +10,19 @@
 #include "filenameUtils.h"
 #include "panic.h"
 
-struct RunCommandOptions {
+typedef struct {
     char** paths;
     size_t pathCount;
     size_t gccArgCount;
     char** gccArgs;
-};
+} RunCommandOptions;
 
 int printError(const char* message, int a) {
     return printf("%s (%d)", message, a);
 }
 
-struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
-    struct RunCommandOptions* options = malloc(sizeof(struct RunCommandOptions));
+RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
+    RunCommandOptions* options = malloc(sizeof(RunCommandOptions));
 
     int doubleHyphenPosition = -1;
 
@@ -67,7 +67,7 @@ struct RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     return options;
 }
 
-char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
+char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
     char commandBuffer[1024];
 
     size_t offset = sprintf(commandBuffer, "gcc %s", entryFilePath);
@@ -96,7 +96,7 @@ char* compileTestEntry(char* entryFilePath, struct RunCommandOptions options) {
     return outputFile;
 }
 
-int executeRun(struct RunCommandOptions* options) {
+int executeRun(RunCommandOptions* options) {
     if(options->pathCount > 0) {
         struct ParsedTestFile parsedFiles[options->pathCount];
 
@@ -119,8 +119,8 @@ int executeRun(struct RunCommandOptions* options) {
     return 0;
 }
 
-struct Command createRunCommand() {
-    struct Command runCommand = {
+Command createRunCommand() {
+    Command runCommand = {
             "run",
             "Command, which runs specified tests",
             (void* (*)(int, char*[])) parseRunArgs,

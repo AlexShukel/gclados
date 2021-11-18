@@ -2,21 +2,27 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-// TODO: set normal helper text
-const char generalHelpText[] = "This is general help text. LUL!";
+// General C language analysis-driven orchestration system.
+const char generalHelpText[] = "Usage: gclados <command> [options]\n"
+                               "General options:\n"
+                               "  --no-colors      Disable colored output. Recommended for terminals, "
+                               "which are not supporting ANSI escape codes.\n"
+                               "Commands:\n"
+                               "  help             Show general help. If there is a command name after, shows help "
+                               "for the specified command.\n"
+                               "  run              Execute tests.\n";
 
-enum HelpFor {
+typedef enum {
     ALL, COMMAND
-};
+} HelpFor;
 
-struct HelpCommandOptions {
-    enum HelpFor helpFor;
+typedef struct {
+    HelpFor helpFor;
     struct Command *command;
-};
+}  HelpCommandOptions;
 
-struct HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
-
-    struct HelpCommandOptions *options = malloc(sizeof(struct HelpCommandOptions));
+HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
+    HelpCommandOptions *options = malloc(sizeof(HelpCommandOptions));
 
     /* if(argc == 0) */ {
         options->helpFor = ALL;
@@ -28,7 +34,7 @@ struct HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
     return options;
 }
 
-int executeHelp(struct HelpCommandOptions* options) {
+int executeHelp(HelpCommandOptions* options) {
     if(options->helpFor == ALL) {
         printf("%s", generalHelpText);
     }
@@ -38,8 +44,8 @@ int executeHelp(struct HelpCommandOptions* options) {
     return 0;
 }
 
-struct Command createHelpCommand() {
-    struct Command helpCommand = {
+Command createHelpCommand() {
+    Command helpCommand = {
             "help",
             "This is help command",
             (void* (*)(int, char*[])) parseHelpArgs,

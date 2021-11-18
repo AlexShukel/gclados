@@ -9,14 +9,18 @@
     return strcmp(helpCmd.slug, command) == 0;
 }*/
 
-int main(int argc, char *argv[]) {
-    struct Command helpCmd = createHelpCommand();
-    struct Command runCmd = createRunCommand();
+void parseGeneralArgs(int argc, char *argv[]) {
 
-    void* opts = runCmd.parseArgs(argc - 2, argv + 2);
+}
+
+int main(int argc, char *argv[]) {
+    Command helpCmd = createHelpCommand();
+    Command runCmd = createRunCommand();
+
+    void* opts = helpCmd.parseArgs(argc - 2, argv + 2);
 
     if(opts != NULL) {
-        return runCmd.execute(opts);
+        return helpCmd.execute(opts);
     } else {
         return 0;
     }

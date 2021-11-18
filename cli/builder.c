@@ -3,7 +3,7 @@
 #include "gclados.h"
 #include "string.h"
 
-#define STR_VALUE(arg)      #arg
+#define STR_VALUE(arg) #arg
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 

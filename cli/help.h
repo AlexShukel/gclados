@@ -3,6 +3,6 @@
 
 #include "command.h"
 
-struct Command createHelpCommand();
+Command createHelpCommand();
 
 #endif

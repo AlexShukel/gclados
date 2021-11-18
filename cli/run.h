@@ -3,6 +3,6 @@
 
 #include "command.h"
 
-struct Command createRunCommand();
+Command createRunCommand();
 
 #endif
