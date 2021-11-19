@@ -4,6 +4,6 @@
 #include "testParser.h"
 #include "filenameUtils.h"
 
-char *buildTestFile(struct ParsedTestFile* testFiles, size_t count);
+char *buildTestFile(ParsedTestFile* testFiles, size_t count);
 
 #endif

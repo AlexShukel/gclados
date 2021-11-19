@@ -12,7 +12,7 @@ void gcladosPrintLineNumber(int number, bool highlight) {
 
 void gcladosPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlightedLine) {
     if(lineBegin < 1 || lineEnd < 1) {
-        gcladosPanic("Begin and end lines should be not less than 1");
+        gcladosPanic("Begin and end lines should be not less than 1", EXIT_FAILURE);
     }
 
     int currentCharacter, currentLine = 1;
@@ -40,7 +40,7 @@ void gcladosPrintFileLines(FILE* file, int lineBegin, int lineEnd, int highlight
 
     if(currentLine < lineEnd) {
         gcladosPanic("Incomplete file segment was printed - end of file was reached"
-                 " or an unexpected error occurred.");
+                 " or an unexpected error occurred.", EXIT_FAILURE);
     }
 }
 

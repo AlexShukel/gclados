@@ -20,7 +20,7 @@ GcladosTestSuite gcladosCreateTestSuite(const char *testSuiteName, GcladosTest *
 
 bool gcladosRunNextTest(GcladosTestSuite *suite) {
     if(suite->completedTestCount >= suite->testCount) {
-        gcladosPanic("Trying to run more tests than actually exist.");
+        gcladosPanic("Trying to run more tests than actually exist.", EXIT_FAILURE);
     }
 
     gcladosRunTest(&suite->tests[suite->completedTestCount]);

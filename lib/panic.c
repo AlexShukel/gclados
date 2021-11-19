@@ -22,12 +22,12 @@
 
 void gcladosPrintBacktrace(FILE* file);
 
-void gcladosPanic(char* message) {
+void gcladosPanic(char* message, int exitCode) {
     fflush(stdout);
     fflush(stderr);
-    fprintf(stderr, "Ptf panicked: %s\n", message);
+    fprintf(stderr, "GcLaDOS panicked: %s\n", message);
     gcladosPrintBacktrace(stderr);
-    exit(1);
+    exit(exitCode);
 }
 
 #if defined(OS_WINDOWS)

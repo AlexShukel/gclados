@@ -7,11 +7,10 @@
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 
-char *buildTestFile(struct ParsedTestFile* testFiles, size_t count) {
+char *buildTestFile(ParsedTestFile* testFiles, size_t count) {
     char *filename = tmpNameExtended(".c");
-
     if(filename == NULL) {
-        gcladosPanic("Could not create temporary file for tests entrypoint.");
+        gcladosPanic("Could not create temporary file for tests entrypoint.", EXIT_FAILURE);
     }
 
     FILE* outputFile = fopen(filename, "w");
@@ -28,6 +27,7 @@ char *buildTestFile(struct ParsedTestFile* testFiles, size_t count) {
     }
 
     fprintf(outputFile, "\nint main() {\n");
+    fprintf(outputFile, "    gcladosColors.setColorsSupported(%s);\n", gcladosColors.colorsSupported() ? "true" : "false");
 
     for(int i = 0; i < count; ++i) {
         fprintf(outputFile, "    GcladosTest gcladosTests%d[] = {\n", i);
@@ -51,7 +51,7 @@ char *buildTestFile(struct ParsedTestFile* testFiles, size_t count) {
     for(int i = 0; i < count; ++i) {
         fprintf(outputFile, "        gcladosTestSuite%d,\n", i);
     }
-    fprintf(outputFile, "    };\n    gcladosRunTestSuites(gcladosTestSuites, %ld);\n", count);
+    fprintf(outputFile, "    };\n    return gcladosRunTestSuites(gcladosTestSuites, %ld);\n", count);
 
     fprintf(outputFile, "}\n");
 

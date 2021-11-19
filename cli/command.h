@@ -6,6 +6,6 @@ typedef struct {
     char* helperText;
     void* (*parseArgs)(int argc, char *argv[]);
     int (*execute)(void* args);
-}  Command;
+} Command;
 
 #endif

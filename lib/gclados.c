@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <signal.h>
 
 void gcladosDrawSuites(GcladosTestSuite *suites, size_t count, bool minified) {
     fflush(stdout);
@@ -13,7 +15,7 @@ void gcladosDrawSuites(GcladosTestSuite *suites, size_t count, bool minified) {
     }
 }
 
-void gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
+int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
     size_t completedTestSuites = 0;
 
     while(completedTestSuites < count) {
@@ -39,4 +41,6 @@ void gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
     for(size_t i = 0; i < count; ++i) {
         gcladosFreeTestSuite(&suites[i]);
     }
+
+    return EBUSY;
 }

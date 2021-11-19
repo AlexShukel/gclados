@@ -53,7 +53,7 @@ char* extractComment(const char* buffer, size_t begin, size_t end) {
     return comment;
 }
 
-int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, struct ParsedTest *output) {
+int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, ParsedTest *output) {
     size_t lastIndex = bytesRead - 5;
 
     int currentTest = 0;
@@ -96,7 +96,7 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, struc
             char* name = calloc(endPoint - beginPoint + 1, sizeof(char));
             memcpy(name, buffer + beginPoint, (endPoint - beginPoint) * sizeof(char));
 
-            struct ParsedTest newTest = {
+            ParsedTest newTest = {
                     .name = name,
                     .description = extractComment(buffer, lastCommentBegin, lastCommentEnd),
             };
@@ -112,17 +112,17 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, struc
     return currentTest;
 }
 
-struct ParsedTestFile parseTestFile(char* path) {
+ParsedTestFile parseTestFile(char* path) {
     FILE* file = fopen(path, "r");
 
-    struct ParsedTest *tests = calloc(100, sizeof(struct ParsedTest));
+    ParsedTest *tests = calloc(100, sizeof(ParsedTest));
 
     char buffer[testFileBufferSize];
     size_t bytesRead = fread(buffer, sizeof(char), testFileBufferSize, file);
 
     size_t count = processBuffer(buffer, bytesRead, tests);
 
-    struct ParsedTestFile testFile = {
+    ParsedTestFile testFile = {
             .fileName = path,
             .testCount = count,
             .tests = tests,

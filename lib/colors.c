@@ -30,7 +30,9 @@ bool gcladosColorsSupported() {
 
 char* gcladosApplyAnsiFlags(char* string, GcladosAnsiFlags flags) {
     if(!gcladosColorsSupported()) {
-        return string;
+        char* newString = calloc(strlen(string), sizeof(char));
+        sprintf(newString, "%s", string);
+        return newString;
     }
 
     char* newString = calloc(strlen(string) + flags.count * 3 + 6, sizeof(char));

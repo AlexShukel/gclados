@@ -6,8 +6,9 @@
 #include "test.h"
 #include "testSuite.h"
 #include "statement.h"
+#include "colors.h"
 
-void gcladosRunTestSuites(GcladosTestSuite *suites, size_t count);
+int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count);
 
 #define GCLADOS_CONCAT(a, b) GCLADOS_CONCAT_INNER(a, b)
 #define GCLADOS_CONCAT_INNER(a, b) a ## b

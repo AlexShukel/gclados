@@ -4,22 +4,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <glob.h>
+#include <errno.h>
 
 #include "testParser.h"
 #include "builder.h"
-#include "filenameUtils.h"
 #include "panic.h"
 
 typedef struct {
-    char** paths;
-    size_t pathCount;
+    glob_t *paths;
+    char **gccArgs;
     size_t gccArgCount;
-    char** gccArgs;
 } RunCommandOptions;
-
-int printError(const char* message, int a) {
-    return printf("%s (%d)", message, a);
-}
 
 RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     RunCommandOptions* options = malloc(sizeof(RunCommandOptions));
@@ -42,25 +37,23 @@ RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     }
 
     if(argc > 0 && (doubleHyphenPosition == -1 || argc - doubleHyphenPosition > 0)) {
-        glob_t globBuffer;
+        glob_t* globBuffer = malloc(sizeof(glob_t));
+        memset(globBuffer, 0, sizeof(glob_t));
 
-        globBuffer.gl_pathc = 0;
-        globBuffer.gl_pathv = NULL;
-        globBuffer.gl_offs = 0;
+        globBuffer->gl_pathc = 0;
+        globBuffer->gl_pathv = NULL;
+        globBuffer->gl_offs = 0;
 
         int queryCount = doubleHyphenPosition == -1 ? argc : doubleHyphenPosition;
         for(int i = 0; i < queryCount; i++) {
-            if(glob(argv[i], GLOB_APPEND, printError, &globBuffer) != 0) {
-                // TODO: add more detailed message here
-                printf("Error!\n");
+            if(glob(argv[i], GLOB_APPEND, NULL, globBuffer) != 0) {
+                printf("Matching %s glob pattern failed: %s\n", argv[i], strerror(errno));
                 return NULL;
             }
         }
 
-        options->pathCount = globBuffer.gl_pathc;
-        options->paths = globBuffer.gl_pathv;
+        options->paths = globBuffer;
     } else {
-        options->pathCount = 0;
         options->paths = NULL;
     }
 
@@ -72,8 +65,8 @@ char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
 
     size_t offset = sprintf(commandBuffer, "gcc %s", entryFilePath);
 
-    for(int i = 0; i < options.pathCount; i++) {
-        offset += sprintf(commandBuffer + offset, " %s", options.paths[i]);
+    for(int i = 0; i < options.paths->gl_pathc; i++) {
+        offset += sprintf(commandBuffer + offset, " %s", options.paths->gl_pathv[i]);
     }
 
     for(int i = 0; i < options.gccArgCount; ++i) {
@@ -83,7 +76,7 @@ char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
     char* outputFile = tmpNameExtended("");
 
     if(outputFile == NULL) {
-        gcladosPanic("Could not create temporary file for test executable.");
+        gcladosPanic("Could not create temporary file for test executable.", EXIT_FAILURE);
     }
 
     sprintf(commandBuffer + offset, " -o %s", outputFile);
@@ -91,25 +84,31 @@ char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
     printf("Executing command \"%s\"...\n", commandBuffer);
     fflush(stdout);
 
-    system(commandBuffer);
+    int exitCode = system(commandBuffer);
+
+    if(exitCode) {
+        gcladosPanic("Failed to compile tests entrypoint. Reason: gcc exited with non-zero exit code.", exitCode);
+    }
 
     return outputFile;
 }
 
 int executeRun(RunCommandOptions* options) {
-    if(options->pathCount > 0) {
-        struct ParsedTestFile parsedFiles[options->pathCount];
+    if(options->paths != NULL && options->paths->gl_pathc > 0) {
+        ParsedTestFile parsedFiles[options->paths->gl_pathc];
 
-        for(size_t i = 0; i < options->pathCount; ++i) {
-            parsedFiles[i] = parseTestFile(options->paths[i]);
+        for(size_t i = 0; i < options->paths->gl_pathc; ++i) {
+            parsedFiles[i] = parseTestFile(options->paths->gl_pathv[i]);
         }
-        char* testFile = buildTestFile(parsedFiles, options->pathCount);
+
+        char* testFile = buildTestFile(parsedFiles, options->paths->gl_pathc);
 
         char* compiled = compileTestEntry(testFile, *options);
-        fflush(stdout);
 
+        printf("Compiled entry path: %s\n", compiled);
         system(compiled);
 
+        free(options->paths);
         free(testFile);
         free(compiled);
     } else {

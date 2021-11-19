@@ -34,9 +34,13 @@ HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
     return options;
 }
 
+void printGeneralHelp() {
+    printf("%s", generalHelpText);
+}
+
 int executeHelp(HelpCommandOptions* options) {
     if(options->helpFor == ALL) {
-        printf("%s", generalHelpText);
+        printGeneralHelp();
     }
 
     // TODO: implement help for single command

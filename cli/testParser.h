@@ -3,17 +3,17 @@
 
 #include <stdlib.h>
 
-struct ParsedTest {
+typedef struct {
     char *name;
     char *description;
-};
+} ParsedTest;
 
-struct ParsedTestFile {
+typedef struct {
     char *fileName;
     size_t testCount;
-    struct ParsedTest *tests;
-};
+    ParsedTest *tests;
+} ParsedTestFile;
 
-struct ParsedTestFile parseTestFile(char* path);
+ParsedTestFile parseTestFile(char* path);
 
 #endif

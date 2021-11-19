@@ -4,5 +4,6 @@
 #include "command.h"
 
 Command createHelpCommand();
+void printGeneralHelp();
 
 #endif
