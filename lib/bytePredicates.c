@@ -5,16 +5,16 @@
 #include "ioutils.h"
 
 typedef struct GcladosEqualBytePredicateOptions {
-    void* bytes;
+    void *bytes;
     size_t count;
 } GcladosEqualBytePredicateOptions;
 
-char *gcladosToEqualBytesMessage(void* value, const GcladosEqualBytePredicateOptions* options, bool pass) {
-    unsigned char* realValue = (unsigned char*) value;
-    unsigned char* expectedValue = (unsigned char*) options->bytes;
+char *gcladosToEqualBytesMessage(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
+    unsigned char *realValue = (unsigned char *) value;
+    unsigned char *expectedValue = (unsigned char *) options->bytes;
 
-    char* realValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
-    char* expectedValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
+    char *realValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
+    char *expectedValueAsHex = calloc(options->count * 2 + 3, sizeof(char));
 
     realValueAsHex[0] = expectedValueAsHex[0] = '0';
     realValueAsHex[1] = expectedValueAsHex[1] = 'x';
@@ -29,7 +29,8 @@ char *gcladosToEqualBytesMessage(void* value, const GcladosEqualBytePredicateOpt
         expectedValueAsHex[i + 3] = valueToHex[expectedValue[i / 2] % 16];
     }
 
-    char* message = gcladosStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
+    char *message =
+            gcladosStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
 
     free(realValueAsHex);
     free(expectedValueAsHex);
@@ -37,9 +38,9 @@ char *gcladosToEqualBytesMessage(void* value, const GcladosEqualBytePredicateOpt
     return message;
 }
 
-bool gcladosToEqualBytesPredicate(void* value, const GcladosEqualBytePredicateOptions* options) {
-    unsigned char* realValue = (unsigned char*) value;
-    unsigned char* expectedValue = (unsigned char*) options->bytes;
+bool gcladosToEqualBytesPredicate(void *value, const GcladosEqualBytePredicateOptions *options) {
+    unsigned char *realValue = (unsigned char *) value;
+    unsigned char *expectedValue = (unsigned char *) options->bytes;
 
     bool pass = true;
     for(int i = 0; i < options->count; i++) {
@@ -52,7 +53,7 @@ bool gcladosToEqualBytesPredicate(void* value, const GcladosEqualBytePredicateOp
     return pass;
 }
 
-GcladosPredicate gcladosToEqualBytes(void* bytes, size_t count) {
+GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {
     GcladosEqualBytePredicateOptions *options = malloc(sizeof(GcladosEqualBytePredicateOptions));
 
     options->bytes = bytes;
@@ -60,8 +61,8 @@ GcladosPredicate gcladosToEqualBytes(void* bytes, size_t count) {
 
     GcladosPredicate predicate = {
             .options = options,
-            .execute = (bool (*)(void*, void*)) gcladosToEqualBytesPredicate,
-            .failMessage = (char *(*)(void *, void *, bool)) gcladosToEqualBytesMessage,
+            .execute = (bool(*)(void *, void *)) gcladosToEqualBytesPredicate,
+            .failMessage = (char *(*) (void *, void *, bool) ) gcladosToEqualBytesMessage,
     };
 
     return predicate;

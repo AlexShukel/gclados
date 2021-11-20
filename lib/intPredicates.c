@@ -1,7 +1,7 @@
 #include "intPredicates.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "colors.h"
 #include "ioutils.h"
@@ -16,9 +16,10 @@ char *gcladosIntToString(int a) {
 
 char *gcladosToEqualIntMessage(const int *options, void *value, bool pass) {
     char *expectedValueAsString = gcladosIntToString(*options);
-    char *receivedValueAsString = gcladosIntToString(*((int*) value));
+    char *receivedValueAsString = gcladosIntToString(*((int *) value));
 
-    char *message = gcladosStandardErrorMessage(pass, "gclados.toEqualInt(%s)", expectedValueAsString, receivedValueAsString);
+    char *message =
+            gcladosStandardErrorMessage(pass, "gclados.toEqualInt(%s)", expectedValueAsString, receivedValueAsString);
 
     free(expectedValueAsString);
     free(receivedValueAsString);
@@ -26,8 +27,8 @@ char *gcladosToEqualIntMessage(const int *options, void *value, bool pass) {
     return message;
 }
 
-bool gcladosToEqualIntPredicate(void* value, const int* options) {
-    return *((int*) value) == *options;
+bool gcladosToEqualIntPredicate(void *value, const int *options) {
+    return *((int *) value) == *options;
 };
 
 GcladosPredicate gcladosToEqualInt(int value) {
@@ -35,8 +36,8 @@ GcladosPredicate gcladosToEqualInt(int value) {
     *options = value;
     GcladosPredicate predicate = {
             .options = options,
-            .execute = (bool (*)(void*, void*)) gcladosToEqualIntPredicate,
-            .failMessage = (char *(*)(void *, void *, bool)) gcladosToEqualIntMessage,
+            .execute = (bool(*)(void *, void *)) gcladosToEqualIntPredicate,
+            .failMessage = (char *(*) (void *, void *, bool) ) gcladosToEqualIntMessage,
     };
 
     return predicate;

@@ -7,24 +7,26 @@
 
 typedef struct {
     bool pass;
-    char* failMessage;
+    char *failMessage;
     int line;
-    char* filePath;
+    char *filePath;
 } GcladosStatementResult;
 
 typedef struct {
     void (*execute)(void);
-    const char* description;
-    GcladosDynamicArray statementResults;
-    bool pass;
+    const char *description;
 } GcladosTest;
 
-GcladosTest gcladosCreateTest(void (*execute)(void), const char* description);
+typedef struct {
+    bool pass;
+    GcladosDynamicArray *statementResults;
+} GcladosTestResult;
 
-void gcladosAddStatementResult(GcladosStatementResult result);
-void gcladosRunTest(GcladosTest *test);
-void gcladosPrintTest(GcladosTest test);
-void gcladosFreeStatementResult(GcladosStatementResult *result);
-void gcladosFreeTest(GcladosTest *test);
+GcladosTest gcladosCreateTest(void (*execute)(void), const char *description);
+
+void gcladosAddStatementResult(GcladosStatementResult *result);
+GcladosTestResult gcladosRunTest(GcladosTest test);
+void gcladosPrintTest(GcladosTest test, GcladosTestResult result);
+void gcladosFreeTestResult(GcladosTestResult testResult);
 
 #endif

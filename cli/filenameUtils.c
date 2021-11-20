@@ -1,11 +1,11 @@
 #include "filenameUtils.h"
-#include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
-char* tmpNameExtended(char* extension) {
+char *tmpNameExtended(char *extension) {
     size_t extensionLength = strlen(extension);
-    char* fileName = calloc(L_tmpnam + extensionLength, sizeof(char));
+    char *fileName = calloc(L_tmpnam + extensionLength, sizeof(char));
 
     if(tmpnam(fileName) == NULL) {
         free(fileName);

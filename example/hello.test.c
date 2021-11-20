@@ -6,5 +6,5 @@ TEST(shouldDoSomething) {
 
 TEST(sss) {
     int ptr = 15;
-    ensure(15, gclados.toEqualBytes(&ptr, sizeof(int)));
+    ensure(16, gclados.toEqualBytes(&ptr, sizeof(int)));
 }

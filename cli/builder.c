@@ -1,19 +1,19 @@
 #include "builder.h"
-#include "stdio.h"
 #include "gclados.h"
+#include "stdio.h"
 #include "string.h"
 
 #define STR_VALUE(arg) #arg
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 
-char *buildTestFile(ParsedTestFile* testFiles, size_t count) {
+char *buildTestFile(ParsedTestFile *testFiles, size_t count) {
     char *filename = tmpNameExtended(".c");
     if(filename == NULL) {
         gcladosPanic("Could not create temporary file for tests entrypoint.", EXIT_FAILURE);
     }
 
-    FILE* outputFile = fopen(filename, "w");
+    FILE *outputFile = fopen(filename, "w");
 
     fprintf(outputFile, "#include \"gclados.h\"\n");
 
@@ -27,7 +27,9 @@ char *buildTestFile(ParsedTestFile* testFiles, size_t count) {
     }
 
     fprintf(outputFile, "\nint main() {\n");
-    fprintf(outputFile, "    gcladosColors.setColorsSupported(%s);\n", gcladosColors.colorsSupported() ? "true" : "false");
+    fprintf(outputFile,
+            "    gcladosColors.setColorsSupported(%s);\n",
+            gcladosColors.colorsSupported() ? "true" : "false");
 
     for(int i = 0; i < count; ++i) {
         fprintf(outputFile, "    GcladosTest gcladosTests%d[] = {\n", i);
@@ -36,7 +38,8 @@ char *buildTestFile(ParsedTestFile* testFiles, size_t count) {
                     "        %s%s(\"%s\"),\n",
                     GCLADOS_TEST_PREFIX_AS_STRING,
                     testFiles[i].tests[j].name,
-                    testFiles[i].tests[j].description == NULL ? testFiles[i].tests[j].name : testFiles[i].tests[j].description);
+                    testFiles[i].tests[j].description == NULL ? testFiles[i].tests[j].name
+                                                              : testFiles[i].tests[j].description);
         }
         fprintf(outputFile, "    };\n");
         fprintf(outputFile,

@@ -4,66 +4,80 @@
 
 #include "colors.h"
 #include "ioutils.h"
+#include "mutils.h"
 
-GcladosTest gcladosCreateTest(void (*executor)(), const char* description) {
+GcladosTest gcladosCreateTest(void (*executor)(), const char *description) {
     GcladosTest test = {
             .execute = executor,
             .description = description,
-            .statementResults = gcladosCreateDynamicArray(sizeof(GcladosStatementResult)),
-            .pass = false,
     };
 
     return test;
 }
 
-GcladosDynamicArray* currentResults;
+GcladosDynamicArray *currentResults;
 
-void gcladosAddStatementResult(GcladosStatementResult result) {
-    gcladosPush(currentResults, &result);
+void gcladosAddStatementResult(GcladosStatementResult *result) {
+    gcladosPush(currentResults, result);
 }
 
-void gcladosRunTest(GcladosTest *test) {
-    currentResults = &test->statementResults;
-    test->execute();
-    test->pass = true;
+GcladosTestResult gcladosRunTest(GcladosTest test) {
+    GcladosTestResult testResult = {
+            .pass = true,
+            .statementResults = gcladosCreateDynamicArray(),
+    };
 
-    for(size_t i = 0; i < test->statementResults.length; ++i) {
-        GcladosStatementResult *result = gcladosGet(&test->statementResults, i);
+    currentResults = testResult.statementResults;
+    test.execute();
+    currentResults = NULL;
+
+    testResult.pass = true;
+
+    for(size_t i = 0; i < testResult.statementResults->length; ++i) {
+        GcladosStatementResult *result = gcladosGet(testResult.statementResults, i);
 
         if(result->pass == false) {
-            test->pass = false;
+            testResult.pass = false;
 
             break;
         }
     }
+
+    return testResult;
 }
 
-void gcladosPrintTest(GcladosTest test) {
-    char* status = test.pass ?
-            gcladosColors.applyFlags("v",
-                                     gcladosColors.createFlags(2,
-                                                               gcladosColors.foregroundColor(GCLADOS_GREEN),
-                                                               gcladosColors.bold())) :
-            gcladosColors.applyFlags("x",
-                                     gcladosColors.createFlags(2,
-                                                               gcladosColors.foregroundColor(GCLADOS_RED),
-                                                               gcladosColors.bold()));
+void gcladosPrintTest(GcladosTest test, GcladosTestResult testResult) {
+    char *status =
+            testResult.pass
+                    ? gcladosColors.applyFlags("v",
+                                               gcladosColors.createFlags(2,
+                                                                         gcladosColors.foregroundColor(GCLADOS_GREEN),
+                                                                         gcladosColors.bold()))
+                    : gcladosColors.applyFlags("x",
+                                               gcladosColors.createFlags(2,
+                                                                         gcladosColors.foregroundColor(GCLADOS_RED),
+                                                                         gcladosColors.bold()));
     printf("  %s  %s\n", status, test.description);
 
     free(status);
 
-    if(!test.pass) {
-        for(size_t i = 0; i < test.statementResults.length; ++i) {
-            GcladosStatementResult *result = gcladosGet(&test.statementResults, i);
+    if(!testResult.pass) {
+        for(size_t i = 0; i < testResult.statementResults->length; ++i) {
+            GcladosStatementResult *result = gcladosGet(testResult.statementResults, i);
 
             if(!result->pass) {
                 printf("\n%s\n", result->failMessage);
 
-                FILE* testFile = fopen(result->filePath, "r");
+                FILE *testFile = fopen(result->filePath, "r");
 
-                gcladosPrintFileLines(testFile, result->line - 2, result->line + 2, result->line);
+                gcladosPrintFileLines(testFile,
+                                      gcladosMax(result->line - 2, 1),
+                                      gcladosMax(result->line + 2, 1),
+                                      result->line);
                 fclose(testFile);
-                char* coloredFile = gcladosColors.applyFlags(result->filePath, gcladosColors.createFlags(1, gcladosColors.foregroundColor(GCLADOS_CYAN)));
+                char *coloredFile = gcladosColors.applyFlags(
+                        result->filePath,
+                        gcladosColors.createFlags(1, gcladosColors.foregroundColor(GCLADOS_CYAN)));
                 printf("    in file %s\n\n", coloredFile);
                 free(coloredFile);
             }
@@ -72,15 +86,16 @@ void gcladosPrintTest(GcladosTest test) {
 }
 
 void gcladosFreeStatementResult(GcladosStatementResult *result) {
-    free(result->failMessage);
-    free(result->filePath);
-    free(result);
+    if(result != NULL) {
+        free(result->failMessage);
+        free(result);
+    }
 }
 
-void gcladosFreeTest(GcladosTest *test) {
-    for(size_t i = 0; i < test->statementResults.length; ++i) {
-        gcladosFreeStatementResult(gcladosGet(&test->statementResults, i));
+void gcladosFreeTestResult(GcladosTestResult testResult) {
+    for(size_t i = 0; i < testResult.statementResults->length; ++i) {
+        gcladosFreeStatementResult(gcladosGet(testResult.statementResults, i));
     }
 
-    gcladosFreeDynamicArray(&test->statementResults);
+    gcladosFreeDynamicArray(testResult.statementResults);
 }

@@ -1,10 +1,10 @@
 #include "colors.h"
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 bool GCLADOS_SUPPORTED_COLORS = true;
 
@@ -28,14 +28,14 @@ bool gcladosColorsSupported() {
     return GCLADOS_SUPPORTED_COLORS;
 }
 
-char* gcladosApplyAnsiFlags(char* string, GcladosAnsiFlags flags) {
+char *gcladosApplyAnsiFlags(char *string, GcladosAnsiFlags flags) {
     if(!gcladosColorsSupported()) {
-        char* newString = calloc(strlen(string), sizeof(char));
+        char *newString = calloc(strlen(string), sizeof(char));
         sprintf(newString, "%s", string);
         return newString;
     }
 
-    char* newString = calloc(strlen(string) + flags.count * 3 + 6, sizeof(char));
+    char *newString = calloc(strlen(string) + flags.count * 3 + 6, sizeof(char));
 
     int currentOffset = sprintf(newString, "\x1b[");
 
@@ -60,12 +60,13 @@ GcladosAnsiFlags gcladosCreateAnsiFlags(int count, ...) {
 
     va_end(list);
 
-    GcladosAnsiFlags output = {
-            .flags = flags,
-            .count = count
-    };
+    GcladosAnsiFlags output = {.flags = flags, .count = count};
 
     return output;
+}
+
+void gcladosFreeFlags(GcladosAnsiFlags flags) {
+    free(flags.flags);
 }
 
 int gcladosForegroundColor(GcladosColor color) {
@@ -73,7 +74,7 @@ int gcladosForegroundColor(GcladosColor color) {
 }
 
 int gcladosBackgroundColor(GcladosColor color) {
-    return (int)(GCLADOS_BACKGROUND_COLOR_OFFSET + color);
+    return (int) (GCLADOS_BACKGROUND_COLOR_OFFSET + color);
 }
 
 int gcladosBold() {
@@ -108,6 +109,7 @@ GcladosColors gcladosColors = {
         .setColorsSupported = gcladosSetColorsSupported,
         .colorsSupported = gcladosColorsSupported,
         .createFlags = gcladosCreateAnsiFlags,
+        .freeFlags = gcladosFreeFlags,
         .applyFlags = gcladosApplyAnsiFlags,
         .foregroundColor = gcladosForegroundColor,
         .backgroundColor = gcladosBackgroundColor,

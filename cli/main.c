@@ -1,9 +1,9 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
-#include "gclados.h"
 #include "args.h"
+#include "gclados.h"
 #include "help.h"
 #include "run.h"
 
@@ -11,7 +11,7 @@ typedef struct {
     bool colors;
 } GeneralArguments;
 
-GeneralArguments parseGeneralArguments(int *argc, char* argv[]) {
+GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
     Argument generalArguments[] = {
             createBoolArgument("colors", "Enables / disables stdout coloring with ANSI escape codes."),
     };
@@ -21,7 +21,7 @@ GeneralArguments parseGeneralArguments(int *argc, char* argv[]) {
     GeneralArguments generalArgumentValues;
 
     if(values[0] != NULL) {
-        generalArgumentValues.colors = *((bool*) values[0]);
+        generalArgumentValues.colors = *((bool *) values[0]);
     } else {
         generalArgumentValues.colors = true;
     }
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    char* commandSlug = argv[1];
+    char *commandSlug = argv[1];
 
     argc -= 2;
     argv += 2;
@@ -63,12 +63,14 @@ int main(int argc, char *argv[]) {
 
     if(currentCommand == NULL) {
         char buffer[100];
-        sprintf(buffer, "Unknown command received \"%s\". "
-                        "Run \"gclados help\" to see list of all available commands", commandSlug);
+        sprintf(buffer,
+                "Unknown command received \"%s\". "
+                "Run \"gclados help\" to see list of all available commands",
+                commandSlug);
         gcladosPanic(buffer, EXIT_FAILURE);
     }
 
-    void* opts = currentCommand->parseArgs(argc, argv);
+    void *opts = currentCommand->parseArgs(argc, argv);
 
     if(opts != NULL) {
         return currentCommand->execute(opts);

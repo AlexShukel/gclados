@@ -1,6 +1,6 @@
 #include "help.h"
-#include "stdlib.h"
 #include "stdio.h"
+#include "stdlib.h"
 
 // General C language analysis-driven orchestration system.
 const char generalHelpText[] = "Usage: gclados <command> [options]\n"
@@ -12,16 +12,18 @@ const char generalHelpText[] = "Usage: gclados <command> [options]\n"
                                "for the specified command.\n"
                                "  run              Execute tests.\n";
 
-typedef enum {
-    ALL, COMMAND
+typedef enum
+{
+    ALL,
+    COMMAND
 } HelpFor;
 
 typedef struct {
     HelpFor helpFor;
     struct Command *command;
-}  HelpCommandOptions;
+} HelpCommandOptions;
 
-HelpCommandOptions* parseHelpArgs(int argc, char *argv[]) {
+HelpCommandOptions *parseHelpArgs(int argc, char *argv[]) {
     HelpCommandOptions *options = malloc(sizeof(HelpCommandOptions));
 
     /* if(argc == 0) */ {
@@ -38,7 +40,7 @@ void printGeneralHelp() {
     printf("%s", generalHelpText);
 }
 
-int executeHelp(HelpCommandOptions* options) {
+int executeHelp(HelpCommandOptions *options) {
     if(options->helpFor == ALL) {
         printGeneralHelp();
     }
@@ -49,12 +51,10 @@ int executeHelp(HelpCommandOptions* options) {
 }
 
 Command createHelpCommand() {
-    Command helpCommand = {
-            "help",
-            "This is help command",
-            (void* (*)(int, char*[])) parseHelpArgs,
-            (int (*)(void*)) executeHelp
-    };
+    Command helpCommand = {"help",
+                           "This is help command",
+                           (void *(*) (int, char *[])) parseHelpArgs,
+                           (int(*)(void *)) executeHelp};
 
     return helpCommand;
 }

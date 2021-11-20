@@ -1,8 +1,8 @@
 #include "testParser.h"
 
-#include <stdio.h>
-#include <stdbool.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -10,7 +10,7 @@ const char PTR_TEST_TOKEN[] = "TEST(";
 const int PTR_TEST_TOKEN_LENGTH = sizeof(PTR_TEST_TOKEN) / sizeof(char);
 const int testFileBufferSize = 1024;
 
-bool isToken(const char* ptr) {
+bool isToken(const char *ptr) {
 
     for(int i = 0; i < PTR_TEST_TOKEN_LENGTH - 1; i++) {
         if(ptr[i] != PTR_TEST_TOKEN[i]) {
@@ -21,7 +21,7 @@ bool isToken(const char* ptr) {
     return true;
 }
 
-void trimWhitespaces(char* string) {
+void trimWhitespaces(char *string) {
     int begin = 0;
     int end = 0;
 
@@ -39,14 +39,14 @@ void trimWhitespaces(char* string) {
     memmove(string, string + begin + 1, end - begin + 2);
 }
 
-char* extractComment(const char* buffer, size_t begin, size_t end) {
+char *extractComment(const char *buffer, size_t begin, size_t end) {
     const size_t commentLength = end - begin + 1;
 
     if(commentLength <= 1 || begin == -1 || end == -1) {
         return NULL;
     }
 
-    char* comment = calloc(commentLength, sizeof(char));
+    char *comment = calloc(commentLength, sizeof(char));
     memcpy(comment, buffer + begin, (end - begin) * sizeof(char));
     trimWhitespaces(comment);
 
@@ -93,7 +93,7 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, Parse
 
             size_t endPoint = i;
 
-            char* name = calloc(endPoint - beginPoint + 1, sizeof(char));
+            char *name = calloc(endPoint - beginPoint + 1, sizeof(char));
             memcpy(name, buffer + beginPoint, (endPoint - beginPoint) * sizeof(char));
 
             ParsedTest newTest = {
@@ -112,8 +112,8 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, Parse
     return currentTest;
 }
 
-ParsedTestFile parseTestFile(char* path) {
-    FILE* file = fopen(path, "r");
+ParsedTestFile parseTestFile(char *path) {
+    FILE *file = fopen(path, "r");
 
     ParsedTest *tests = calloc(100, sizeof(ParsedTest));
 

@@ -9,7 +9,7 @@ typedef struct {
 typedef struct Argument {
     char *name;
     char *description;
-    ArgumentParseResult* (*tryParse)(struct Argument *argument, int argc, char *argv[]);
+    ArgumentParseResult *(*tryParse)(struct Argument *argument, int argc, char *argv[]);
 } Argument;
 
 void **parseArguments(Argument *arguments, int argumentCount, int *argc, char *argv[]);

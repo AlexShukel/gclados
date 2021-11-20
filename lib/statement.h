@@ -3,6 +3,6 @@
 
 #include "predicate.h"
 
-void gcladosCreateStatement(int line, char* filePath, void* value, GcladosPredicate predicate);
+void gcladosCreateStatement(int line, char *filePath, void *value, GcladosPredicate predicate);
 
 #endif

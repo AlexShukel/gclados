@@ -1,14 +1,14 @@
 #include "run.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <glob.h>
 #include <errno.h>
+#include <glob.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "testParser.h"
 #include "builder.h"
 #include "panic.h"
+#include "testParser.h"
 
 typedef struct {
     glob_t *paths;
@@ -16,8 +16,8 @@ typedef struct {
     size_t gccArgCount;
 } RunCommandOptions;
 
-RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
-    RunCommandOptions* options = malloc(sizeof(RunCommandOptions));
+RunCommandOptions *parseRunArgs(int argc, char *argv[]) {
+    RunCommandOptions *options = malloc(sizeof(RunCommandOptions));
 
     int doubleHyphenPosition = -1;
 
@@ -37,7 +37,7 @@ RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     }
 
     if(argc > 0 && (doubleHyphenPosition == -1 || argc - doubleHyphenPosition > 0)) {
-        glob_t* globBuffer = malloc(sizeof(glob_t));
+        glob_t *globBuffer = malloc(sizeof(glob_t));
         memset(globBuffer, 0, sizeof(glob_t));
 
         globBuffer->gl_pathc = 0;
@@ -60,7 +60,7 @@ RunCommandOptions* parseRunArgs(int argc, char* argv[]) {
     return options;
 }
 
-char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
+char *compileTestEntry(char *entryFilePath, RunCommandOptions options) {
     char commandBuffer[1024];
 
     size_t offset = sprintf(commandBuffer, "gcc %s", entryFilePath);
@@ -73,7 +73,7 @@ char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
         offset += sprintf(commandBuffer + offset, " %s", options.gccArgs[i]);
     }
 
-    char* outputFile = tmpNameExtended("");
+    char *outputFile = tmpNameExtended("");
 
     if(outputFile == NULL) {
         gcladosPanic("Could not create temporary file for test executable.", EXIT_FAILURE);
@@ -93,7 +93,7 @@ char* compileTestEntry(char* entryFilePath, RunCommandOptions options) {
     return outputFile;
 }
 
-int executeRun(RunCommandOptions* options) {
+int executeRun(RunCommandOptions *options) {
     if(options->paths != NULL && options->paths->gl_pathc > 0) {
         ParsedTestFile parsedFiles[options->paths->gl_pathc];
 
@@ -101,12 +101,18 @@ int executeRun(RunCommandOptions* options) {
             parsedFiles[i] = parseTestFile(options->paths->gl_pathv[i]);
         }
 
-        char* testFile = buildTestFile(parsedFiles, options->paths->gl_pathc);
+        char *testFile = buildTestFile(parsedFiles, options->paths->gl_pathc);
 
-        char* compiled = compileTestEntry(testFile, *options);
+        char *compiled = compileTestEntry(testFile, *options);
 
-        printf("Compiled entry path: %s\n", compiled);
-        system(compiled);
+        int status = system(compiled);
+
+        if(status) {
+            char buffer[100];
+
+            sprintf(buffer, "Running tests failed with non-zero exit code. (%s)", strsignal(status));
+            gcladosPanic(buffer, status);
+        }
 
         free(options->paths);
         free(testFile);
@@ -122,8 +128,8 @@ Command createRunCommand() {
     Command runCommand = {
             "run",
             "Command, which runs specified tests",
-            (void* (*)(int, char*[])) parseRunArgs,
-            (int (*)(void*)) executeRun,
+            (void *(*) (int, char *[])) parseRunArgs,
+            (int(*)(void *)) executeRun,
     };
 
     return runCommand;

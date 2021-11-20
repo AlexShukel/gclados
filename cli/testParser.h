@@ -14,6 +14,6 @@ typedef struct {
     ParsedTest *tests;
 } ParsedTestFile;
 
-ParsedTestFile parseTestFile(char* path);
+ParsedTestFile parseTestFile(char *path);
 
 #endif

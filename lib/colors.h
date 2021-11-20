@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 typedef struct {
-        int* flags;
-        int count;
+    int *flags;
+    int count;
 } GcladosAnsiFlags;
 
 typedef enum {
@@ -23,7 +23,8 @@ typedef struct {
     void (*setColorsSupported)(bool colorSupport);
     bool (*colorsSupported)();
     GcladosAnsiFlags (*createFlags)(int count, ...);
-    char* (*applyFlags)(char* input, GcladosAnsiFlags);
+    void (*freeFlags)(GcladosAnsiFlags flags);
+    char *(*applyFlags)(char *input, GcladosAnsiFlags);
     int (*foregroundColor)(GcladosColor color);
     int (*backgroundColor)(GcladosColor color);
     int (*bold)();

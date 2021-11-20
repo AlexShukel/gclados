@@ -7,7 +7,7 @@
 
 typedef struct {
     GcladosPredicate (*toEqualInt)(int value);
-    GcladosPredicate (*toEqualBytes)(void* bytes, size_t size);
+    GcladosPredicate (*toEqualBytes)(void *bytes, size_t size);
 } GcladosPredicateNamespace;
 
 extern GcladosPredicateNamespace gclados;

@@ -1,15 +1,14 @@
 #include "args.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
 
 void **parseArguments(Argument *arguments, int argumentCount, int *argc, char *argv[]) {
     int currentIndex = 0;
-    void **result = calloc(argumentCount, sizeof(void*));
+    void **result = calloc(argumentCount, sizeof(void *));
 
-    char* notParsedArgs[*argc];
+    char *notParsedArgs[*argc];
     int notParsedArgCount = 0;
 
     while(currentIndex < *argc) {
@@ -21,7 +20,8 @@ void **parseArguments(Argument *arguments, int argumentCount, int *argc, char *a
         bool argumentParsed = false;
 
         for(int i = 0; i < argumentCount; ++i) {
-            ArgumentParseResult *parseResult = arguments[i].tryParse(&arguments[i], *argc - currentIndex, argv + currentIndex);
+            ArgumentParseResult *parseResult =
+                    arguments[i].tryParse(&arguments[i], *argc - currentIndex, argv + currentIndex);
 
             if(parseResult != NULL) {
                 argumentParsed = true;
@@ -42,7 +42,7 @@ void **parseArguments(Argument *arguments, int argumentCount, int *argc, char *a
     int argumentCountAfterHyphen = *argc - currentIndex;
 
     if(currentIndex + 1 < *argc) {
-        memmove(argv + notParsedArgCount, argv + currentIndex, (*argc - currentIndex) * sizeof(char*));
+        memmove(argv + notParsedArgCount, argv + currentIndex, (*argc - currentIndex) * sizeof(char *));
     }
 
     *argc = notParsedArgCount + argumentCountAfterHyphen;
@@ -60,7 +60,7 @@ ArgumentParseResult *tryParseBoolArgument(Argument *argument, int argc, char *ar
     free(fullArgumentName);
 
     if(comparisonResult == 0) {
-        bool* value = malloc(sizeof(bool*));
+        bool *value = malloc(sizeof(bool *));
         ArgumentParseResult *result = malloc(sizeof(ArgumentParseResult));
 
         if(argc > 1 && strcmp("false", argv[1]) == 0) {

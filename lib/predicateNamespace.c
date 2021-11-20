@@ -1,7 +1,7 @@
 #include "predicateNamespace.h"
 
-#include "intPredicates.h"
 #include "bytePredicates.h"
+#include "intPredicates.h"
 
 GcladosPredicateNamespace gclados = {
         .toEqualInt = gcladosToEqualInt,

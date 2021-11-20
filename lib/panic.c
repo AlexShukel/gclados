@@ -20,18 +20,18 @@
 #include <execinfo.h>
 #endif
 
-void gcladosPrintBacktrace(FILE* file);
+void gcladosPrintBacktrace(FILE *file);
 
-void gcladosPanic(char* message, int exitCode) {
+void gcladosPanic(char *message, int exitCode) {
     fflush(stdout);
-    fflush(stderr);
     fprintf(stderr, "GcLaDOS panicked: %s\n", message);
     gcladosPrintBacktrace(stderr);
+    fflush(stderr);
     exit(exitCode);
 }
 
 #if defined(OS_WINDOWS)
-void gcladosPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE *file) {
     /* TODO: implement backtrace for windows
     SymInitialize(GetCurrentProcess(), NULL, TRUE);
     CONTEXT context;
@@ -89,17 +89,17 @@ void gcladosPrintBacktrace(FILE* file) {
      */
 }
 #elif defined(OS_LINUX)
-void gcladosPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE *file) {
     void *backtraceBuffer[1024];
     int backtraceSize = backtrace(backtraceBuffer, 1024);
-    char** backtraceSymbols = backtrace_symbols(backtraceBuffer, backtraceSize);
+    char **backtraceSymbols = backtrace_symbols(backtraceBuffer, backtraceSize);
 
     for(int i = 1; i < backtraceSize; ++i) {
         fprintf(stderr, "%s\n", backtraceSymbols[i]);
     }
 }
 #elif
-void gcladosPrintBacktrace(FILE* file) {
+void gcladosPrintBacktrace(FILE *file) {
     // Do nothing - system is not supported.
 }
 #endif
