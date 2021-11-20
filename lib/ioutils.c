@@ -103,3 +103,20 @@ char *gcladosStandardErrorMessage(bool pass, char *usage, char *expected, char *
 
     return messageBuff;
 }
+
+const char gcladosHexValues[] = "0123456789ABCDEF";
+
+char *gcladosConvertToHex(void *ptr, size_t size) {
+    char *hexString = calloc(size * 2 + 3, sizeof(char));
+    unsigned char *castedPtr = (unsigned char *) ptr;
+
+    hexString[0] = '0';
+    hexString[1] = 'x';
+
+    for(int i = 0; i < size * 2; i += 2) {
+        hexString[size * 2 - i + 1] = gcladosHexValues[castedPtr[i / 2] % 16];
+        hexString[size * 2 - i] = gcladosHexValues[castedPtr[i / 2] / 16];
+    }
+
+    return hexString;
+}

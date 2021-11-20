@@ -14,8 +14,8 @@ TEST(test0) {
 
 // Should be equal to bytes
 TEST(test1) {
-    unsigned short value = 65535;
-    ensure(-65535, gclados.toEqualBytes(&value, sizeof(short)));
+    short value = -32768;
+    ensure(32767, gclados.toEqualBytes(&value, sizeof(short)));
 }
 /*
 int main() {
