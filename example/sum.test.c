@@ -1,32 +1,23 @@
 #include "sum.h"
 #include "gclados.h"
 
-int currentTEST(int asdf) {
-    return 0;
-};
-
 // Should be equal to int
 TEST(test0) {
-    const char fakeTest[] = " TEST(insideString) ";
-
-    sum(1, 2);
+    ensure((float) sum(1, 2), gclados.toEqualFloat(10));
 }
 
-// Should be equal to bytes
 TEST(test1) {
-    short value = -32768;
-    ensure(32767, gclados.toEqualBytes(&value, sizeof(short)));
+    ensure((float) sum(1, 2), gclados.toBeGreaterThanFloat(5));
 }
-/*
-int main() {
-    struct PtfTest ptfTests1[] = {
-            __ptfTest_test0("Should be equal to int"),
-            __ptfTest_test1("Should be equal to bytes"),
-    };
-    struct PtfTestSuite ptfTestSuite1 = createPtfTestSuite("../../example/sum.test.c", ptfTests1, 2);
-    struct PtfTestSuite ptfTestSuites[] = {
-            ptfTestSuite1,
-    };
-    runPtfTestSuites(ptfTestSuites, 1);
+
+TEST(test2) {
+    ensure((float) sum(1, 2), gclados.toBeLessThanFloat(3));
 }
-*/
+
+TEST(test3) {
+    ensure((float) sum(1, 2), gclados.toBeGreaterThanOrEqualFloat(4));
+}
+
+TEST(test4) {
+    ensure((float) sum(1, 2), gclados.toBeLessThanOrEqualFloat(2));
+}
