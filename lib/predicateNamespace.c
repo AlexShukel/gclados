@@ -11,13 +11,20 @@
     .toBeGreaterThanOrEqual##name = gcladosToBeGreaterThanOrEqual##name,
 
 GcladosPredicateNamespace gclados = {
-        NUMBER_PREDICATE_ASSIGNMENTS(Char) NUMBER_PREDICATE_ASSIGNMENTS(UnsignedChar)
-                NUMBER_PREDICATE_ASSIGNMENTS(Short) NUMBER_PREDICATE_ASSIGNMENTS(UnsignedShort)
-                        NUMBER_PREDICATE_ASSIGNMENTS(Int) NUMBER_PREDICATE_ASSIGNMENTS(Unsigned)
-                                NUMBER_PREDICATE_ASSIGNMENTS(Long) NUMBER_PREDICATE_ASSIGNMENTS(UnsignedLong)
-                                        NUMBER_PREDICATE_ASSIGNMENTS(Float) NUMBER_PREDICATE_ASSIGNMENTS(Double)
-                                                NUMBER_PREDICATE_ASSIGNMENTS(LongDouble)
-                                                        .toEqualBytes = gcladosToEqualBytes,
+        // clang-format off
+        NUMBER_PREDICATE_ASSIGNMENTS(Char)
+        NUMBER_PREDICATE_ASSIGNMENTS(UnsignedChar)
+        NUMBER_PREDICATE_ASSIGNMENTS(Short)
+        NUMBER_PREDICATE_ASSIGNMENTS(UnsignedShort)
+        NUMBER_PREDICATE_ASSIGNMENTS(Int)
+        NUMBER_PREDICATE_ASSIGNMENTS(Unsigned)
+        NUMBER_PREDICATE_ASSIGNMENTS(Long)
+        NUMBER_PREDICATE_ASSIGNMENTS(UnsignedLong)
+        NUMBER_PREDICATE_ASSIGNMENTS(Float)
+        NUMBER_PREDICATE_ASSIGNMENTS(Double)
+        NUMBER_PREDICATE_ASSIGNMENTS(LongDouble)
+        .toEqualBytes = gcladosToEqualBytes,
+        // clang-format on
         .not = gcladosNot,
 };
 
