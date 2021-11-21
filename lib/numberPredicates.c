@@ -124,8 +124,4 @@ NUMBER_PREDICATE(Int, signed int, "%d")
 NUMBER_PREDICATE(Unsigned, unsigned int, "%u")
 NUMBER_PREDICATE(Long, signed long, "%ld")
 NUMBER_PREDICATE(UnsignedLong, unsigned long, "%lu")
-NUMBER_PREDICATE(Float, float, "%f")
-NUMBER_PREDICATE(Double, double, "%lf")
-NUMBER_PREDICATE(LongDouble, long double, "%Lf")
-
 #undef NUMBER_PREDICATE

@@ -1,6 +1,7 @@
 #include "predicateNamespace.h"
 
 #include "bytePredicates.h"
+#include "floatPredicates.h"
 #include "notPredicate.h"
 #include "numberPredicates.h"
 
@@ -9,6 +10,8 @@
     .toBeGreaterThan##name = gcladosToBeGreaterThan##name,                                                             \
     .toBeLessThanOrEqual##name = gcladosToBeLessThanOrEqual##name,                                                     \
     .toBeGreaterThanOrEqual##name = gcladosToBeGreaterThanOrEqual##name
+
+#define FLOAT_PREDICATE_ASSIGNMENTS(name) .toEqual##name = gcladosToEqual##name
 
 GcladosPredicateNamespace gclados = {
         NUMBER_PREDICATE_ASSIGNMENTS(Char),
@@ -19,9 +22,9 @@ GcladosPredicateNamespace gclados = {
         NUMBER_PREDICATE_ASSIGNMENTS(Unsigned),
         NUMBER_PREDICATE_ASSIGNMENTS(Long),
         NUMBER_PREDICATE_ASSIGNMENTS(UnsignedLong),
-        NUMBER_PREDICATE_ASSIGNMENTS(Float),
-        NUMBER_PREDICATE_ASSIGNMENTS(Double),
-        NUMBER_PREDICATE_ASSIGNMENTS(LongDouble),
+
+        FLOAT_PREDICATE_ASSIGNMENTS(Float),
+
         .toEqualBytes = gcladosToEqualBytes,
         .not = gcladosNot,
 };
