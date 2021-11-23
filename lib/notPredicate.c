@@ -2,8 +2,12 @@
 
 #include <stdlib.h>
 
-char *gcladosNotMessage(void *value, GcladosPredicate *predicate, bool pass) {
-    return predicate->failMessage(value, predicate->options, !pass);
+char *gcladosNotExpectedValue(void *value, GcladosPredicate *predicate, bool pass) {
+    return predicate->expectedValueToString(value, predicate->options, !pass);
+}
+
+char *gcladosNotReceivedValue(void *value, GcladosPredicate *predicate, bool pass) {
+    return predicate->receivedValueToString(value, predicate->options, !pass);
 }
 
 bool gcladosNotPredicate(void *value, GcladosPredicate *predicate) {
@@ -17,7 +21,9 @@ GcladosPredicate gcladosNot(GcladosPredicate optionsPredicate) {
 
     GcladosPredicate predicate = {
             .options = options,
-            .failMessage = (char *(*) (void *, void *, bool) ) gcladosNotMessage,
+            .usage = optionsPredicate.usage,
+            .expectedValueToString = (GcladosValueToStringConverter) gcladosNotExpectedValue,
+            .receivedValueToString = (GcladosValueToStringConverter) gcladosNotReceivedValue,
             .execute = (bool(*)(void *, void *)) gcladosNotPredicate,
     };
 

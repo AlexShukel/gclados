@@ -4,5 +4,5 @@
 
 // Should be equal to int
 TEST(test0) {
-    ensure(0.3f + 0.6f, gclados.not(gclados.toBeLessThanFloat(10.0f)));
+    ensure(1 + 2, gclados.not(gclados.toBeLessThanOrEqualInt(4)));
 }

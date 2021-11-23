@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "ioutils.h"
 #include "test.h"
 
 void gcladosCreateStatement(int line, char *filePath, void *value, GcladosPredicate predicate) {
@@ -14,9 +15,7 @@ void gcladosCreateStatement(int line, char *filePath, void *value, GcladosPredic
     result->filePath = filePath;
 
     if(!pass) {
-        char *message = predicate.failMessage(value, predicate.options, pass);
-
-        result->failMessage = message;
+        result->failMessage = gcladosGetFailedStatementMessage(pass, predicate, value);
     }
 
     free(predicate.options);

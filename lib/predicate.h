@@ -3,9 +3,13 @@
 
 #include <stdbool.h>
 
+typedef char *(*GcladosValueToStringConverter)(void *value, void *options, bool pass);
+
 typedef struct {
     bool (*execute)(void *value, void *options);
-    char *(*failMessage)(void *value, void *options, bool pass);
+    char *usage;
+    GcladosValueToStringConverter expectedValueToString;
+    GcladosValueToStringConverter receivedValueToString;
     void *options;
 } GcladosPredicate;
 

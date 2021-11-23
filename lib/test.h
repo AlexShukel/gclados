@@ -4,10 +4,11 @@
 #include <stdbool.h>
 
 #include "dynamicArray.h"
+#include "predicate.h"
 
 typedef struct {
-    bool pass;
     char *failMessage;
+    bool pass;
     int line;
     char *filePath;
 } GcladosStatementResult;

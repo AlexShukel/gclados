@@ -5,7 +5,8 @@
 
 #define FLOAT_PREDICATE_DEFINITIONS(name, type)                                                                        \
     GcladosPredicate gcladosToEqual##name(type value, type precision);                                                 \
-    GcladosPredicate gcladosToBeLessThan##name(type value);
+    GcladosPredicate gcladosToBeLessThan##name(type value);                                                            \
+    GcladosPredicate gcladosToBeGreaterThan##name(type value);
 
 
 FLOAT_PREDICATE_DEFINITIONS(Float, float)

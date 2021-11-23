@@ -14,7 +14,8 @@
 
 #define FLOAT_PREDICATE_DEFINITIONS(name, type)                                                                        \
     GcladosPredicate (*toEqual##name)(type value, type precision);                                                     \
-    GcladosPredicate (*toBeLessThan##name)(type value);
+    GcladosPredicate (*toBeLessThan##name)(type value);                                                                \
+    GcladosPredicate (*toBeGreaterThan##name)(type value);
 
 typedef struct {
     NUMBER_PREDICATE_DEFINITIONS(Char, signed char)

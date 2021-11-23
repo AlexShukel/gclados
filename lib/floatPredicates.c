@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ioutils.h"
-
 #define FLOAT_PREDICATE(name, type, printFormat, epsilon)                                                              \
                                                                                                                        \
     typedef struct {                                                                                                   \
@@ -19,6 +17,10 @@
         return str;                                                                                                    \
     }                                                                                                                  \
                                                                                                                        \
+    char *gclados##name##ValueToString(const type *value, const void *options, bool pass) {                            \
+        return gclados##name##ToString(*value);                                                                        \
+    }                                                                                                                  \
+                                                                                                                       \
     type gclados##name##Abs(const type value) {                                                                        \
         return value < 0 ? -value : value;                                                                             \
     }                                                                                                                  \
@@ -27,29 +29,28 @@
         return gclados##name##Abs(*value - options->value) <= options->precision / 2.0f;                               \
     }                                                                                                                  \
                                                                                                                        \
-    char *gcladosToEqual##name##Message(const type *value, const Gclados##name##Options *options, bool pass) {         \
+    char *gcladosToEqual##name##ExpectedValue(const type *value, const Gclados##name##Options *options, bool pass) {   \
         char *rawExpectedValue = gclados##name##ToString(options->value);                                              \
         char *precisionAsString = gclados##name##ToString(options->precision);                                         \
-        char expectedValue[200];                                                                                       \
+        char *expectedValue = calloc(256, sizeof(char));                                                               \
                                                                                                                        \
         sprintf(expectedValue,                                                                                         \
-                "%s ~%s",                                                                                              \
+                pass ? "not %s ~%s" : "%s ~%s",                                                                        \
                 rawExpectedValue,                                                                                      \
                 options->precision == epsilon ? "epsilon" : precisionAsString);                                        \
                                                                                                                        \
         free(precisionAsString);                                                                                       \
         free(rawExpectedValue);                                                                                        \
                                                                                                                        \
-        char *receivedValue = gclados##name##ToString(*value);                                                         \
+        return expectedValue;                                                                                          \
+    }                                                                                                                  \
                                                                                                                        \
-        char *message = gcladosStandardErrorMessage(pass,                                                              \
-                                                    "gclados.toEqual" #name "(%s, precision)",                         \
-                                                    expectedValue,                                                     \
-                                                    receivedValue);                                                    \
-                                                                                                                       \
-        free(receivedValue);                                                                                           \
-                                                                                                                       \
-        return message;                                                                                                \
+    char *gcladosToEqual##name##ReceivedValue(const type *value, const Gclados##name##Options *options, bool pass) {   \
+        if(pass) {                                                                                                     \
+            return NULL;                                                                                               \
+        } else {                                                                                                       \
+            return gclados##name##ToString(*value);                                                                    \
+        }                                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToEqual##name(const type value, const type precision) {                                    \
@@ -59,7 +60,9 @@
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
                 .execute = (bool(*)(void *, void *)) gcladosToEqual##name##Predicate,                                  \
-                .failMessage = (char *(*) (void *, void *, bool) ) gcladosToEqual##name##Message,                      \
+                .usage = "gclados.toEqual" #name "(%s, precision)",                                                    \
+                .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ExpectedValue,          \
+                .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ReceivedValue,          \
                 .options = options,                                                                                    \
         };                                                                                                             \
                                                                                                                        \
@@ -70,21 +73,14 @@
         return *value < *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    char *gcladosToBeLessThan##name##Message(const type *value, const type *options, bool pass) {                      \
+    char *gcladosToBeLessThan##name##ExpectedValue(const type *value, const type *options, bool pass) {                \
         char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
-        char expectedValue[100];                                                                                       \
+        char *expectedValue = calloc(128, sizeof(char));                                                               \
                                                                                                                        \
-        sprintf(expectedValue, "< %s", rawExpectedValue);                                                              \
+        sprintf(expectedValue, pass ? "> %s" : "< %s", rawExpectedValue);                                              \
         free(rawExpectedValue);                                                                                        \
                                                                                                                        \
-        char *receivedValue = gclados##name##ToString(*value);                                                         \
-                                                                                                                       \
-        char *message =                                                                                                \
-                gcladosStandardErrorMessage(pass, "gclados.toBeLessThan" #name "(%s)", expectedValue, receivedValue);  \
-                                                                                                                       \
-        free(receivedValue);                                                                                           \
-                                                                                                                       \
-        return message;                                                                                                \
+        return expectedValue;                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeLessThan##name(const type value) {                                                     \
@@ -93,7 +89,9 @@
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
                 .execute = (bool(*)(void *, void *)) gcladosToBeLessThan##name##Predicate,                             \
-                .failMessage = (char *(*) (void *, void *, bool) ) gcladosToBeLessThan##name##Message,                 \
+                .usage = "gclados.toBeLessThan" #name "(%s)",                                                          \
+                .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeLessThan##name##ExpectedValue,     \
+                .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \
                 .options = options,                                                                                    \
         };                                                                                                             \
                                                                                                                        \
@@ -103,21 +101,14 @@
         return *value > *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    char *gcladosToBeGreaterThan##name##Message(const type *value, const type *options, bool pass) {                   \
+    char *gcladosToBeGreaterThan##name##ExpectedValue(const type *value, const type *options, bool pass) {             \
         char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
-        char expectedValue[100];                                                                                       \
+        char *expectedValue = calloc(128, sizeof(char));                                                               \
                                                                                                                        \
-        sprintf(expectedValue, "> %s", rawExpectedValue);                                                              \
+        sprintf(expectedValue, pass ? "< %s" : "> %s", rawExpectedValue);                                              \
         free(rawExpectedValue);                                                                                        \
                                                                                                                        \
-        char *receivedValue = gclados##name##ToString(*value);                                                         \
-                                                                                                                       \
-        char *message =                                                                                                \
-                gcladosStandardErrorMessage(pass, "gclados.toBeLessThan" #name "(%s)", expectedValue, receivedValue);  \
-                                                                                                                       \
-        free(receivedValue);                                                                                           \
-                                                                                                                       \
-        return message;                                                                                                \
+        return expectedValue;                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeGreaterThan##name(const type value) {                                                  \
@@ -125,8 +116,10 @@
         *options = value;                                                                                              \
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
-                .execute = (bool(*)(void *, void *)) gcladosToBeLessThan##name##Predicate,                             \
-                .failMessage = (char *(*) (void *, void *, bool) ) gcladosToBeLessThan##name##Message,                 \
+                .execute = (bool(*)(void *, void *)) gcladosToBeGreaterThan##name##Predicate,                          \
+                .usage = "gclados.toBeGreaterThan" #name "(%s)",                                                       \
+                .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeGreaterThan##name##ExpectedValue,  \
+                .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \
                 .options = options,                                                                                    \
         };                                                                                                             \
                                                                                                                        \

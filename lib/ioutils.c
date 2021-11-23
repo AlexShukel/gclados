@@ -10,6 +10,10 @@ void gcladosPrintLineNumber(int number, bool highlight) {
     printf("\n%c %3d | ", highlight ? '>' : ' ', number);
 }
 
+char *gcladosStandardErrorMessage(bool pass, char *usage, char *expected, char *received) {
+    gcladosPanic("Function is not implemented", 1);
+}
+
 void gcladosPrintFileLines(FILE *file, int lineBegin, int lineEnd, int highlightedLine) {
     if(lineBegin < 1 || lineEnd < 1) {
         gcladosPanic("Begin and end lines should be not less than 1", EXIT_FAILURE);
@@ -56,7 +60,7 @@ void gcladosPrintProgress(FILE *file, double percentage, size_t width) {
     fprintf(file, "%s", progressBuffer);
 }
 
-char *gcladosStandardErrorMessage(bool pass, char *usage, char *expected, char *received) {
+char *gcladosGetFailedStatementMessage(bool pass, GcladosPredicate predicate, void *value) {
     const GcladosAnsiFlags expectedValueFlags =
             gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_GREEN), gcladosColors.bold());
     const GcladosAnsiFlags receivedValueFlags =
@@ -65,41 +69,79 @@ char *gcladosStandardErrorMessage(bool pass, char *usage, char *expected, char *
     char *messageBuff = calloc(1024, sizeof(char));
     int offset = 0;
 
-    if(usage != NULL) {
+    if(predicate.usage != NULL) {
         char *expectedString = gcladosColors.applyFlags("expected", expectedValueFlags);
         char *receivedString = gcladosColors.applyFlags("received", receivedValueFlags);
 
         char *usageColorized = calloc(256, sizeof(char));
 
-        sprintf(usageColorized, usage, receivedString);
+        sprintf(usageColorized, predicate.usage, receivedString);
 
-        offset += sprintf(messageBuff, "  ensure(%s, %s);\n\n", expectedString, usageColorized);
+        offset += sprintf(messageBuff,
+                          pass ? "  ensure(%s, gclados.not(%s));\n" : "  ensure(%s, %s);\n",
+                          expectedString,
+                          usageColorized);
 
         free(expectedString);
         free(receivedString);
         free(usageColorized);
     }
 
-    if(pass) {
-        char *expectedBuff = calloc(256, sizeof(char));
-        sprintf(expectedBuff, "not %s", expected);
-        char *expectedBuffColorized = gcladosColors.applyFlags(expectedBuff, receivedValueFlags);
-        offset += sprintf(messageBuff + offset, "    Expected: %s", expectedBuffColorized);
-
-        free(expectedBuff);
-        free(expectedBuffColorized);
-    } else {
-        char *expectedColorized = gcladosColors.applyFlags(expected, expectedValueFlags);
-        char *receivedColorized = gcladosColors.applyFlags(received, receivedValueFlags);
-
-        offset += sprintf(messageBuff + offset,
-                          "    Expected: %s\n    Received: %s",
-                          expectedColorized,
-                          receivedColorized);
-
-        free(expectedColorized);
-        free(receivedColorized);
+    if(predicate.expectedValueToString == NULL) {
+        gcladosPanic("expectedValueToString function not specified - predicate always should print expected value.\n",
+                     EXIT_FAILURE);
     }
+
+    char *rawExpected = predicate.expectedValueToString(value, predicate.options, pass);
+
+    if(rawExpected == NULL) {
+        gcladosPanic("expectedValueToString returned NULL - predicate always should print expected value.\n",
+                     EXIT_FAILURE);
+    }
+
+    if(predicate.receivedValueToString != NULL) {
+        char *expected = gcladosColors.applyFlags(rawExpected, expectedValueFlags);
+        offset += sprintf(messageBuff + offset, "\n    Expected: %s", expected);
+        free(expected);
+
+        char *rawReceived = predicate.receivedValueToString(value, predicate.options, pass);
+        if(rawReceived != NULL) {
+            char *received = gcladosColors.applyFlags(rawReceived, receivedValueFlags);
+            offset += sprintf(messageBuff + offset, "\n    Received: %s", received);
+            free(received);
+            free(rawReceived);
+        }
+    } else {
+        offset += sprintf(messageBuff + offset, "%s", rawExpected);
+    }
+
+    free(rawExpected);
+
+
+    //    if(pass) {
+    //        char *expectedBuff = calloc(256, sizeof(char));
+    //        sprintf(expectedBuff, "%s", result.predicate.valueToString());
+    //        char *expectedBuffColorized = gcladosColors.applyFlags(expectedBuff, expectedValueFlags);
+    //        offset += sprintf(messageBuff + offset, "    Expected: %s", expectedBuffColorized);
+    //
+    //        free(expectedBuff);
+    //        free(expectedBuffColorized);
+    //    } else {
+    //        char *expectedColorized = gcladosColors.applyFlags(expected, expectedValueFlags);
+    //
+    //        offset += sprintf(messageBuff + offset,
+    //                          "    Expected: %s",
+    //                          expectedColorized);
+    //
+    //        free(expectedColorized);
+    //    }
+    //
+    //    char *receivedColorized = gcladosColors.applyFlags(received, receivedValueFlags);
+    //    sprintf(messageBuff + offset, "\n    Received: %s", receivedColorized);
+    //    free(receivedColorized);
+
+    gcladosColors.freeFlags(expectedValueFlags);
+    gcladosColors.freeFlags(receivedValueFlags);
 
     return messageBuff;
 }

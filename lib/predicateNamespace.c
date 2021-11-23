@@ -12,7 +12,8 @@
     .toBeGreaterThanOrEqual##name = gcladosToBeGreaterThanOrEqual##name
 
 #define FLOAT_PREDICATE_ASSIGNMENTS(name)                                                                              \
-    .toEqual##name = gcladosToEqual##name, .toBeLessThan##name = gcladosToBeLessThan##name
+    .toEqual##name = gcladosToEqual##name, .toBeLessThan##name = gcladosToBeLessThan##name,                            \
+    .toBeGreaterThan##name = gcladosToBeGreaterThan##name
 
 GcladosPredicateNamespace gclados = {
         NUMBER_PREDICATE_ASSIGNMENTS(Char),

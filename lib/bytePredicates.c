@@ -1,6 +1,7 @@
 #include "bytePredicates.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "ioutils.h"
 
@@ -9,17 +10,26 @@ typedef struct GcladosEqualBytePredicateOptions {
     size_t count;
 } GcladosEqualBytePredicateOptions;
 
-char *gcladosToEqualBytesMessage(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
-    char *realValueAsHex = gcladosConvertToHex(value, options->count);
-    char *expectedValueAsHex = gcladosConvertToHex(options->bytes, options->count);
+char *gcladosToEqualBytesExpectedValue(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
+    char *valueAsHex = gcladosConvertToHex(options->bytes, options->count);
 
-    char *message =
-            gcladosStandardErrorMessage(pass, "ptf.toEqualBytes(%s, someSize)", expectedValueAsHex, realValueAsHex);
+    if(pass) {
+        char *valueWithPrefix = calloc(sizeof(char), strlen(valueAsHex) + 4);
+        sprintf(valueWithPrefix, "not %s", valueAsHex);
+        free(valueAsHex);
 
-    free(realValueAsHex);
-    free(expectedValueAsHex);
+        return valueWithPrefix;
+    } else {
+        return valueAsHex;
+    }
+}
 
-    return message;
+char *gcladosToEqualBytesReceivedValue(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
+    if(pass) {
+        return NULL;
+    } else {
+        return gcladosConvertToHex(value, options->count);
+    }
 }
 
 bool gcladosToEqualBytesPredicate(void *value, const GcladosEqualBytePredicateOptions *options) {
@@ -45,8 +55,10 @@ GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {
 
     GcladosPredicate predicate = {
             .options = options,
+            .usage = "ptf.toEqualBytes(%s, someSize)",
             .execute = (bool(*)(void *, void *)) gcladosToEqualBytesPredicate,
-            .failMessage = (char *(*) (void *, void *, bool) ) gcladosToEqualBytesMessage,
+            .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesExpectedValue,
+            .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesReceivedValue,
     };
 
     return predicate;
