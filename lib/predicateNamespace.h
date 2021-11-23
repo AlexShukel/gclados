@@ -12,7 +12,9 @@
     GcladosPredicate (*toBeLessThanOrEqual##name)(type value);                                                         \
     GcladosPredicate (*toBeGreaterThanOrEqual##name)(type value);
 
-#define FLOAT_PREDICATE_DEFINITIONS(name, type) GcladosPredicate (*toEqual##name)(type value, type precision);
+#define FLOAT_PREDICATE_DEFINITIONS(name, type)                                                                        \
+    GcladosPredicate (*toEqual##name)(type value, type precision);                                                     \
+    GcladosPredicate (*toBeLessThan##name)(type value);
 
 typedef struct {
     NUMBER_PREDICATE_DEFINITIONS(Char, signed char)
@@ -25,6 +27,8 @@ typedef struct {
     NUMBER_PREDICATE_DEFINITIONS(UnsignedLong, unsigned long)
 
     FLOAT_PREDICATE_DEFINITIONS(Float, float)
+    FLOAT_PREDICATE_DEFINITIONS(Double, double)
+    FLOAT_PREDICATE_DEFINITIONS(LongDouble, long double)
 
     GcladosPredicate (*toEqualBytes)(void *bytes, size_t size);
     GcladosPredicate (*not )(GcladosPredicate predicate);

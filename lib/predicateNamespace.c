@@ -11,7 +11,8 @@
     .toBeLessThanOrEqual##name = gcladosToBeLessThanOrEqual##name,                                                     \
     .toBeGreaterThanOrEqual##name = gcladosToBeGreaterThanOrEqual##name
 
-#define FLOAT_PREDICATE_ASSIGNMENTS(name) .toEqual##name = gcladosToEqual##name
+#define FLOAT_PREDICATE_ASSIGNMENTS(name)                                                                              \
+    .toEqual##name = gcladosToEqual##name, .toBeLessThan##name = gcladosToBeLessThan##name
 
 GcladosPredicateNamespace gclados = {
         NUMBER_PREDICATE_ASSIGNMENTS(Char),
@@ -24,6 +25,8 @@ GcladosPredicateNamespace gclados = {
         NUMBER_PREDICATE_ASSIGNMENTS(UnsignedLong),
 
         FLOAT_PREDICATE_ASSIGNMENTS(Float),
+        FLOAT_PREDICATE_ASSIGNMENTS(Double),
+        FLOAT_PREDICATE_ASSIGNMENTS(LongDouble),
 
         .toEqualBytes = gcladosToEqualBytes,
         .not = gcladosNot,

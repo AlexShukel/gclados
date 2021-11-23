@@ -24,7 +24,7 @@
     }                                                                                                                  \
                                                                                                                        \
     bool gcladosToEqual##name##Predicate(const type *value, const Gclados##name##Options *options) {                   \
-        return gclados##name##Abs(*value - options->value) <= options->precision;                                      \
+        return gclados##name##Abs(*value - options->value) <= options->precision / 2.0f;                               \
     }                                                                                                                  \
                                                                                                                        \
     char *gcladosToEqual##name##Message(const type *value, const Gclados##name##Options *options, bool pass) {         \
@@ -64,8 +64,77 @@
         };                                                                                                             \
                                                                                                                        \
         return predicate;                                                                                              \
+    }                                                                                                                  \
+                                                                                                                       \
+    bool gcladosToBeLessThan##name##Predicate(const type *value, const type *options) {                                \
+        return *value < *options;                                                                                      \
+    }                                                                                                                  \
+                                                                                                                       \
+    char *gcladosToBeLessThan##name##Message(const type *value, const type *options, bool pass) {                      \
+        char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
+        char expectedValue[100];                                                                                       \
+                                                                                                                       \
+        sprintf(expectedValue, "< %s", rawExpectedValue);                                                              \
+        free(rawExpectedValue);                                                                                        \
+                                                                                                                       \
+        char *receivedValue = gclados##name##ToString(*value);                                                         \
+                                                                                                                       \
+        char *message =                                                                                                \
+                gcladosStandardErrorMessage(pass, "gclados.toBeLessThan" #name "(%s)", expectedValue, receivedValue);  \
+                                                                                                                       \
+        free(receivedValue);                                                                                           \
+                                                                                                                       \
+        return message;                                                                                                \
+    }                                                                                                                  \
+                                                                                                                       \
+    GcladosPredicate gcladosToBeLessThan##name(const type value) {                                                     \
+        type *options = malloc(sizeof(type));                                                                          \
+        *options = value;                                                                                              \
+                                                                                                                       \
+        GcladosPredicate predicate = {                                                                                 \
+                .execute = (bool(*)(void *, void *)) gcladosToBeLessThan##name##Predicate,                             \
+                .failMessage = (char *(*) (void *, void *, bool) ) gcladosToBeLessThan##name##Message,                 \
+                .options = options,                                                                                    \
+        };                                                                                                             \
+                                                                                                                       \
+        return predicate;                                                                                              \
+    }                                                                                                                  \
+    bool gcladosToBeGreaterThan##name##Predicate(const type *value, const type *options) {                             \
+        return *value > *options;                                                                                      \
+    }                                                                                                                  \
+                                                                                                                       \
+    char *gcladosToBeGreaterThan##name##Message(const type *value, const type *options, bool pass) {                   \
+        char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
+        char expectedValue[100];                                                                                       \
+                                                                                                                       \
+        sprintf(expectedValue, "> %s", rawExpectedValue);                                                              \
+        free(rawExpectedValue);                                                                                        \
+                                                                                                                       \
+        char *receivedValue = gclados##name##ToString(*value);                                                         \
+                                                                                                                       \
+        char *message =                                                                                                \
+                gcladosStandardErrorMessage(pass, "gclados.toBeLessThan" #name "(%s)", expectedValue, receivedValue);  \
+                                                                                                                       \
+        free(receivedValue);                                                                                           \
+                                                                                                                       \
+        return message;                                                                                                \
+    }                                                                                                                  \
+                                                                                                                       \
+    GcladosPredicate gcladosToBeGreaterThan##name(const type value) {                                                  \
+        type *options = malloc(sizeof(type));                                                                          \
+        *options = value;                                                                                              \
+                                                                                                                       \
+        GcladosPredicate predicate = {                                                                                 \
+                .execute = (bool(*)(void *, void *)) gcladosToBeLessThan##name##Predicate,                             \
+                .failMessage = (char *(*) (void *, void *, bool) ) gcladosToBeLessThan##name##Message,                 \
+                .options = options,                                                                                    \
+        };                                                                                                             \
+                                                                                                                       \
+        return predicate;                                                                                              \
     }
 
 FLOAT_PREDICATE(Float, float, "%f", FLT_EPSILON)
+FLOAT_PREDICATE(Double, double, "%lf", DBL_EPSILON)
+FLOAT_PREDICATE(LongDouble, long double, "%Lf", LDBL_EPSILON)
 
 #undef FLOAT_PREDICATE
