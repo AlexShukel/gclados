@@ -75,11 +75,11 @@ char *gcladosGetFailedStatementMessage(bool pass, GcladosPredicate predicate, vo
 
         char *usageColorized = calloc(256, sizeof(char));
 
-        sprintf(usageColorized, predicate.usage, receivedString);
+        sprintf(usageColorized, predicate.usage, expectedString);
 
         offset += sprintf(messageBuff,
                           pass ? "  ensure(%s, gclados.not(%s));\n" : "  ensure(%s, %s);\n",
-                          expectedString,
+                          receivedString,
                           usageColorized);
 
         free(expectedString);
