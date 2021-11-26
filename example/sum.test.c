@@ -1,12 +1,14 @@
 #include "sum.h"
 #include "gclados.h"
 #include <float.h>
+#include <string.h>
 
 // Should be equal to int
 TEST(test0) {
-    int array[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 20};
+    int a[3] = {1, 2, 3};
+    int b[3] = {4, 10, 6};
+    int c[3] = {7, 8, 9};
+    int *array[3] = {a, b, c};
 
-    gcladosCreateStatement(__LINE__, __FILE__, &(array), gclados.each(gclados.toBeLessThanInt(10), sizeof(int), 10));
-
-    // ensure(array, gclados.each(gclados.toBeLessThanInt(10), sizeof(int), 10));
+    ensureArray(array, gclados.each(gclados.each(gclados.toBeLessThanInt(10), sizeof(int), 3), sizeof(int *), 3));
 }

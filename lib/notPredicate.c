@@ -22,10 +22,15 @@ GcladosPredicate gcladosNot(GcladosPredicate optionsPredicate) {
     GcladosPredicate predicate = {
             .options = options,
             .usage = optionsPredicate.usage,
+            .customOutput = optionsPredicate.customOutput,
+            .receivedValueToString = NULL,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosNotExpectedValue,
-            .receivedValueToString = (GcladosValueToStringConverter) gcladosNotReceivedValue,
             .execute = (bool(*)(void *, void *)) gcladosNotPredicate,
     };
+
+    if(optionsPredicate.receivedValueToString != NULL) {
+        predicate.receivedValueToString = (GcladosValueToStringConverter) gcladosNotReceivedValue;
+    }
 
     return predicate;
 }

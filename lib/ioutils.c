@@ -10,10 +10,6 @@ void gcladosPrintLineNumber(int number, bool highlight) {
     printf("\n%c %3d | ", highlight ? '>' : ' ', number);
 }
 
-char *gcladosStandardErrorMessage(bool pass, char *usage, char *expected, char *received) {
-    gcladosPanic("Function is not implemented", 1);
-}
-
 void gcladosPrintFileLines(FILE *file, int lineBegin, int lineEnd, int highlightedLine) {
     if(lineBegin < 1 || lineEnd < 1) {
         gcladosPanic("Begin and end lines should be not less than 1", EXIT_FAILURE);
@@ -87,58 +83,27 @@ char *gcladosGetFailedStatementMessage(bool pass, GcladosPredicate predicate, vo
         free(usageColorized);
     }
 
-    if(predicate.expectedValueToString == NULL) {
-        gcladosPanic("expectedValueToString function not specified - predicate always should print expected value.\n",
-                     EXIT_FAILURE);
-    }
+    if(predicate.expectedValueToString != NULL) {
+        char *rawExpected = predicate.expectedValueToString(value, predicate.options, pass);
 
-    char *rawExpected = predicate.expectedValueToString(value, predicate.options, pass);
-
-    if(rawExpected == NULL) {
-        gcladosPanic("expectedValueToString returned NULL - predicate always should print expected value.\n",
-                     EXIT_FAILURE);
-    }
-
-    if(predicate.receivedValueToString != NULL) {
-        char *expected = gcladosColors.applyFlags(rawExpected, expectedValueFlags);
-        offset += sprintf(messageBuff + offset, "\n    Expected: %s", expected);
-        free(expected);
-
-        char *rawReceived = predicate.receivedValueToString(value, predicate.options, pass);
-        if(rawReceived != NULL) {
-            char *received = gcladosColors.applyFlags(rawReceived, receivedValueFlags);
-            offset += sprintf(messageBuff + offset, "\n    Received: %s", received);
-            free(received);
-            free(rawReceived);
+        if(predicate.customOutput) {
+            offset += sprintf(messageBuff + offset, "\n%s", rawExpected);
+        } else {
+            char *expected = gcladosColors.applyFlags(rawExpected, expectedValueFlags);
+            offset += sprintf(messageBuff + offset, "\n    Expected: %s", expected);
+            free(expected);
         }
-    } else {
-        offset += sprintf(messageBuff + offset, "%s", rawExpected);
+
+        free(rawExpected);
     }
 
-    free(rawExpected);
-
-
-    //    if(pass) {
-    //        char *expectedBuff = calloc(256, sizeof(char));
-    //        sprintf(expectedBuff, "%s", result.predicate.valueToString());
-    //        char *expectedBuffColorized = gcladosColors.applyFlags(expectedBuff, expectedValueFlags);
-    //        offset += sprintf(messageBuff + offset, "    Expected: %s", expectedBuffColorized);
-    //
-    //        free(expectedBuff);
-    //        free(expectedBuffColorized);
-    //    } else {
-    //        char *expectedColorized = gcladosColors.applyFlags(expected, expectedValueFlags);
-    //
-    //        offset += sprintf(messageBuff + offset,
-    //                          "    Expected: %s",
-    //                          expectedColorized);
-    //
-    //        free(expectedColorized);
-    //    }
-    //
-    //    char *receivedColorized = gcladosColors.applyFlags(received, receivedValueFlags);
-    //    sprintf(messageBuff + offset, "\n    Received: %s", receivedColorized);
-    //    free(receivedColorized);
+    if(!predicate.customOutput && predicate.receivedValueToString != NULL) {
+        char *rawReceived = predicate.receivedValueToString(value, predicate.options, pass);
+        char *received = gcladosColors.applyFlags(rawReceived, receivedValueFlags);
+        offset += sprintf(messageBuff + offset, "\n    Received: %s", received);
+        free(received);
+        free(rawReceived);
+    }
 
     gcladosColors.freeFlags(expectedValueFlags);
     gcladosColors.freeFlags(receivedValueFlags);

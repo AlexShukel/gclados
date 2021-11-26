@@ -15,9 +15,15 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count);
 #define GCLADOS_ENSURE_INNER(varName, value, predicate)                                                                \
     typeof(value)(varName) = value;                                                                                    \
     gcladosCreateStatement(__LINE__, __FILE__, &(varName), predicate)
+#define GCLADOS_ENSURE_ARRAY_INNER(varName, value, predicate)                                                          \
+    typeof((value)[0]) *(varName) = value;                                                                             \
+    gcladosCreateStatement(__LINE__, __FILE__, &varName, predicate);
+
 
 #define GCLADOS_TEST_PREFIX __gcladosTest_
 #define ensure(value, predicate) GCLADOS_ENSURE_INNER(GCLADOS_CONCAT(__gcladosValue, __COUNTER__), value, predicate)
+#define ensureArray(value, predicate)                                                                                  \
+    GCLADOS_ENSURE_ARRAY_INNER(GCLADOS_CONCAT(__gcladosValue, __COUNTER__), value, predicate)
 #define TEST(testName)                                                                                                 \
     void GCLADOS_CONCAT(__gcladosTestExecutor_, testName)(void);                                                       \
     GcladosTest GCLADOS_CONCAT(GCLADOS_TEST_PREFIX, testName)(char *description) {                                     \

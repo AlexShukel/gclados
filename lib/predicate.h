@@ -8,6 +8,7 @@ typedef char *(*GcladosValueToStringConverter)(void *value, void *options, bool 
 typedef struct {
     bool (*execute)(void *value, void *options);
     char *usage;
+    bool customOutput;
     GcladosValueToStringConverter expectedValueToString;
     GcladosValueToStringConverter receivedValueToString;
     void *options;

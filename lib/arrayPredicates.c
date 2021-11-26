@@ -8,9 +8,9 @@ typedef struct {
     size_t arrayLength;
 } GcladosArrayPredicateOptions;
 
-bool gcladosEachPredicate(char *value, const GcladosArrayPredicateOptions *options) {
+bool gcladosEachPredicate(char **value, const GcladosArrayPredicateOptions *options) {
     for(size_t i = 0; i < options->arrayLength; ++i) {
-        if(!options->predicate.execute((value) + i * options->elementSize, options->predicate.options)) {
+        if(!options->predicate.execute((*value) + i * options->elementSize, options->predicate.options)) {
             return false;
         }
     }
@@ -18,17 +18,33 @@ bool gcladosEachPredicate(char *value, const GcladosArrayPredicateOptions *optio
     return true;
 }
 
-char *gcladosEachMessage(char *value, const GcladosArrayPredicateOptions *options, bool pass) {
+char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *options, bool pass) {
     char *message = calloc(1024, sizeof(char));
 
     size_t offset = sprintf(message, "{ ");
 
     for(size_t i = 0; i < options->arrayLength; ++i) {
-        char *element = options->predicate.receivedValueToString(value + i * options->elementSize,
-                                                                 options->predicate.options,
-                                                                 pass);
+        void *elementValue = *value + i * options->elementSize;
+        char *element = options->predicate.receivedValueToString(elementValue, options->predicate.options, pass);
 
-        offset += sprintf(message + offset, i == options->arrayLength - 1 ? "%s " : "%s, ", element);
+        char *format;
+        bool elementPassed = !(options->predicate.execute(elementValue, options->predicate.options)) == pass;
+
+        if(i == options->arrayLength - 1) {
+            if(elementPassed) {
+                format = "%s ";
+            } else {
+                format = "(%s) ";
+            }
+        } else {
+            if(elementPassed) {
+                format = "%s, ";
+            } else {
+                format = "(%s), ";
+            }
+        }
+
+        offset += sprintf(message + offset, format, element);
         free(element);
     }
 
@@ -46,7 +62,10 @@ GcladosPredicate gcladosEach(GcladosPredicate elementPredicate, size_t elementSi
     GcladosPredicate predicate = {
             .execute = (bool(*)(void *, void *)) gcladosEachPredicate,
             .usage = "gclados.each(%s, elementSize, arrayLength)",
+            .customOutput = true,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosEachMessage,
+            .receivedValueToString = (GcladosValueToStringConverter) gcladosEachMessage,
+            .options = options,
     };
 
     return predicate;
