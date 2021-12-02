@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
+#include "ioutils.h"
+
+const char *GCLADOS_SUMMARY_ROW_FORMAT = "%12s: ";
 
 void gcladosDrawSuites(const GcladosTestSuite suites[],
                        const GcladosTestSuiteAccumulatedResult results[],
@@ -23,7 +28,7 @@ void gcladosDrawSuites(const GcladosTestSuite suites[],
 }
 
 void gcladosPrintSummary(char *name, size_t total, size_t passed) {
-    printf("%12s: ", name);
+    printf(GCLADOS_SUMMARY_ROW_FORMAT, name);
 
     if(passed < total) {
         char buffer[30];
@@ -55,6 +60,8 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
 
     GcladosTestSuiteAccumulatedResult *results = calloc(count, sizeof(GcladosTestSuiteAccumulatedResult));
 
+    const clock_t startTime = clock();
+
     while(completedTestSuites < count) {
         size_t currentSuiteIndex = completedTestSuites;
 
@@ -72,6 +79,8 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
         gcladosCompleteTestSuiteResult(&results[currentSuiteIndex]);
     }
 
+    const clock_t endTime = clock();
+
     gcladosDrawSuites(suites, results, count, false);
 
     size_t totalTests = 0, passedTests = 0;
@@ -87,6 +96,9 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
 
     gcladosPrintSummary("Test suites", totalTestSuites, passedTestSuites);
     gcladosPrintSummary("Tests", totalTests, passedTests);
+    printf(GCLADOS_SUMMARY_ROW_FORMAT, "Time");
+    gcladosPrintTime(endTime - startTime);
+    printf("\n");
 
     for(size_t i = 0; i < count; ++i) {
         gcladosFreeTestSuiteResult(results[i]);

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "colors.h"
 #include "panic.h"
@@ -128,4 +129,32 @@ char *gcladosConvertToHex(void *ptr, size_t size) {
     }
 
     return hexString;
+}
+
+void gcladosPrintTime(clock_t time) {
+    int minutes = (int) (time / (CLOCKS_PER_SEC * 60ul));
+    int seconds = (int) (time / CLOCKS_PER_SEC) % 60;
+    int milliseconds = (int) (time / (CLOCKS_PER_SEC / 1000)) % 1000;
+    int nanoseconds = (int) (time % (CLOCKS_PER_SEC / 1000));
+
+    int sections[] = {minutes, seconds, milliseconds, nanoseconds};
+    char *sectionNames[] = {"%ld minutes", "%d seconds", "%d milliseconds", "%d nanoseconds"};
+    int sectionCount = sizeof(sections) / sizeof(int);
+
+    int firstNonZero = sectionCount - 1;
+
+    for(int i = 0; i < sectionCount; ++i) {
+        if(sections[i] != 0) {
+            firstNonZero = i;
+            break;
+        }
+    }
+
+    for(int i = firstNonZero; i < sectionCount; ++i) {
+        printf(sectionNames[i], sections[i]);
+
+        if(i != sectionCount - 1) {
+            printf(", ");
+        }
+    }
 }
