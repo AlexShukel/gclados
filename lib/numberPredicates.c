@@ -83,7 +83,7 @@
     }                                                                                                                  \
                                                                                                                        \
     char *gcladosToBeLessThan##name##ExpectedValue(const type *value, const type *options, bool pass) {                \
-        return gclados##name##ToStringWithPrefix(*options, pass ? "> %s" : "< %s");                                    \
+        return gclados##name##ToStringWithPrefix(*options, pass ? ">= %s" : "< %s");                                   \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeLessThan##name(const type value) {                                                     \
@@ -100,7 +100,7 @@
     }                                                                                                                  \
                                                                                                                        \
     char *gcladosToBeGreaterThan##name##ExpectedValue(const type *value, const type *options, bool pass) {             \
-        return gclados##name##ToStringWithPrefix(*options, pass ? "< %s" : "> %s");                                    \
+        return gclados##name##ToStringWithPrefix(*options, pass ? "<= %s" : "> %s");                                   \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeGreaterThan##name(const type value) {                                                  \
@@ -117,7 +117,7 @@
     }                                                                                                                  \
                                                                                                                        \
     char *gcladosToBeLessThanOrEqual##name##ExpectedValue(const type *value, const type *options, bool pass) {         \
-        return gclados##name##ToStringWithPrefix(*options, pass ? ">= %s" : "<= %s");                                  \
+        return gclados##name##ToStringWithPrefix(*options, pass ? "> %s" : "<= %s");                                   \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeLessThanOrEqual##name(const type value) {                                              \
@@ -134,7 +134,7 @@
     }                                                                                                                  \
                                                                                                                        \
     char *gcladosToBeGreaterThanOrEqual##name##ExpectedValue(const type *value, const type *options, bool pass) {      \
-        return gclados##name##ToStringWithPrefix(*options, pass ? "<= %s" : ">= %s");                                  \
+        return gclados##name##ToStringWithPrefix(*options, pass ? "< %s" : ">= %s");                                   \
     }                                                                                                                  \
                                                                                                                        \
     GcladosPredicate gcladosToBeGreaterThanOrEqual##name(const type value) {                                           \

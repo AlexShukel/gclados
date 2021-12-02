@@ -78,7 +78,7 @@
         char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
         char *expectedValue = calloc(128, sizeof(char));                                                               \
                                                                                                                        \
-        sprintf(expectedValue, pass ? "> %s" : "< %s", rawExpectedValue);                                              \
+        sprintf(expectedValue, pass ? ">= %s" : "< %s", rawExpectedValue);                                             \
         free(rawExpectedValue);                                                                                        \
                                                                                                                        \
         return expectedValue;                                                                                          \
@@ -107,7 +107,7 @@
         char *rawExpectedValue = gclados##name##ToString(*options);                                                    \
         char *expectedValue = calloc(128, sizeof(char));                                                               \
                                                                                                                        \
-        sprintf(expectedValue, pass ? "< %s" : "> %s", rawExpectedValue);                                              \
+        sprintf(expectedValue, pass ? "<= %s" : "> %s", rawExpectedValue);                                             \
         free(rawExpectedValue);                                                                                        \
                                                                                                                        \
         return expectedValue;                                                                                          \
