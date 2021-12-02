@@ -1,6 +1,7 @@
 #include "predicateNamespace.h"
 
 #include "arrayPredicates.h"
+#include "boolPredicates.h"
 #include "bytePredicates.h"
 #include "floatPredicates.h"
 #include "notPredicate.h"
@@ -30,7 +31,8 @@ GcladosPredicateNamespace gclados = {
         FLOAT_PREDICATE_ASSIGNMENTS(Double),
         FLOAT_PREDICATE_ASSIGNMENTS(LongDouble),
 
-
+        .toBeTruthy = gcladosToBeTruthy,
+        .toBeFalsy = gcladosToBeFalsy,
         .each = gcladosEach,
         .toEqualBytes = gcladosToEqualBytes,
         .not = gcladosNot,

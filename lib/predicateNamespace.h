@@ -31,6 +31,8 @@ typedef struct {
     FLOAT_PREDICATE_DEFINITIONS(Double, double)
     FLOAT_PREDICATE_DEFINITIONS(LongDouble, long double)
 
+    GcladosPredicate (*toBeTruthy)();
+    GcladosPredicate (*toBeFalsy)();
     GcladosPredicate (*toEqualBytes)(void *bytes, size_t size);
     GcladosPredicate (*each)(GcladosPredicate predicate, size_t elementSize, size_t arrayLength);
     GcladosPredicate (*not )(GcladosPredicate predicate);
