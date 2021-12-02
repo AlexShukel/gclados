@@ -92,5 +92,5 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
         gcladosFreeTestSuiteResult(results[i]);
     }
 
-    return EXIT_SUCCESS;
+    return totalTests == passedTests ? EXIT_SUCCESS : EXIT_FAILURE;
 }

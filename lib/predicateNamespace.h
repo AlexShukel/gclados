@@ -18,6 +18,7 @@
     GcladosPredicate (*toBeGreaterThan##name)(type value);
 
 typedef struct {
+    // Number predicates
     NUMBER_PREDICATE_DEFINITIONS(Char, signed char)
     NUMBER_PREDICATE_DEFINITIONS(UnsignedChar, unsigned char)
     NUMBER_PREDICATE_DEFINITIONS(Short, signed short)
@@ -27,14 +28,25 @@ typedef struct {
     NUMBER_PREDICATE_DEFINITIONS(Long, signed long)
     NUMBER_PREDICATE_DEFINITIONS(UnsignedLong, unsigned long)
 
+    // Float predicates
     FLOAT_PREDICATE_DEFINITIONS(Float, float)
     FLOAT_PREDICATE_DEFINITIONS(Double, double)
     FLOAT_PREDICATE_DEFINITIONS(LongDouble, long double)
 
+    // String predicates
+    GcladosPredicate (*toEqualString)(char *string);
+
+    // Boolean predicates
     GcladosPredicate (*toBeTruthy)();
     GcladosPredicate (*toBeFalsy)();
+
+    // Byte / pointer predicates
     GcladosPredicate (*toEqualBytes)(void *bytes, size_t size);
+
+    // Array predicates
     GcladosPredicate (*each)(GcladosPredicate predicate, size_t elementSize, size_t arrayLength);
+
+    // Miscellaneous
     GcladosPredicate (*not )(GcladosPredicate predicate);
 } GcladosPredicateNamespace;
 

@@ -4,5 +4,5 @@
 #include <string.h>
 
 TEST(test1) {
-    ensure(2 == 2, gclados.toBeFalsy());
+    ensure("Hello world!", gclados.not(gclados.toEqualString("Hello world!")));
 }

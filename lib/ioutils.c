@@ -99,10 +99,12 @@ char *gcladosGetFailedStatementMessage(bool pass, GcladosPredicate predicate, vo
 
     if(!predicate.customOutput && predicate.receivedValueToString != NULL) {
         char *rawReceived = predicate.receivedValueToString(value, predicate.options, pass);
-        char *received = gcladosColors.applyFlags(rawReceived, receivedValueFlags);
-        offset += sprintf(messageBuff + offset, "\n    Received: %s", received);
-        free(received);
-        free(rawReceived);
+        if(rawReceived != NULL) {
+            char *received = gcladosColors.applyFlags(rawReceived, receivedValueFlags);
+            offset += sprintf(messageBuff + offset, "\n    Received: %s", received);
+            free(received);
+            free(rawReceived);
+        }
     }
 
     gcladosColors.freeFlags(expectedValueFlags);

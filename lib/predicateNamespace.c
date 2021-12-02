@@ -6,6 +6,7 @@
 #include "floatPredicates.h"
 #include "notPredicate.h"
 #include "numberPredicates.h"
+#include "stringPredicates.h"
 
 #define NUMBER_PREDICATE_ASSIGNMENTS(name)                                                                             \
     .toEqual##name = gcladosToEqual##name, .toBeLessThan##name = gcladosToBeLessThan##name,                            \
@@ -31,6 +32,7 @@ GcladosPredicateNamespace gclados = {
         FLOAT_PREDICATE_ASSIGNMENTS(Double),
         FLOAT_PREDICATE_ASSIGNMENTS(LongDouble),
 
+        .toEqualString = gcladosToEqualString,
         .toBeTruthy = gcladosToBeTruthy,
         .toBeFalsy = gcladosToBeFalsy,
         .each = gcladosEach,
