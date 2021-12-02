@@ -59,6 +59,7 @@ GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {
             .execute = (bool(*)(void *, void *)) gcladosToEqualBytesPredicate,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesExpectedValue,
             .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesReceivedValue,
+            .free = NULL,
     };
 
     return predicate;

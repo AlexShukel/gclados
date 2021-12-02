@@ -35,6 +35,7 @@ GcladosPredicate gcladosToBeTruthy() {
             .receivedValueToString = (GcladosValueToStringConverter) gcladosBoolReceivedValueToString,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosBoolExpectedValueToString,
             .execute = (bool(*)(void *, void *)) gcladosBoolPredicate,
+            .free = NULL,
     };
 
     return predicate;

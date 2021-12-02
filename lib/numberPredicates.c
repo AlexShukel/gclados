@@ -38,6 +38,7 @@
                 .execute = (bool(*)(void *, void *)) execute,                                                          \
                 .expectedValueToString = expectedValueToString,                                                        \
                 .receivedValueToString = receivedValueToString,                                                        \
+                .free = NULL,                                                                                          \
         };                                                                                                             \
                                                                                                                        \
         return predicate;                                                                                              \

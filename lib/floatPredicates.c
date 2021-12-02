@@ -64,6 +64,7 @@
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ExpectedValue,          \
                 .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ReceivedValue,          \
                 .options = options,                                                                                    \
+                .free = NULL,                                                                                          \
         };                                                                                                             \
                                                                                                                        \
         return predicate;                                                                                              \
@@ -93,6 +94,7 @@
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeLessThan##name##ExpectedValue,     \
                 .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \
                 .options = options,                                                                                    \
+                .free = NULL,                                                                                          \
         };                                                                                                             \
                                                                                                                        \
         return predicate;                                                                                              \
@@ -121,6 +123,7 @@
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeGreaterThan##name##ExpectedValue,  \
                 .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \
                 .options = options,                                                                                    \
+                .free = NULL,                                                                                          \
         };                                                                                                             \
                                                                                                                        \
         return predicate;                                                                                              \

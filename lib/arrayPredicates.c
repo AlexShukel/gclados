@@ -52,6 +52,12 @@ char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *optio
     return message;
 }
 
+void gcladosFreeEachPredicate(GcladosPredicate *predicate) {
+    GcladosArrayPredicateOptions *options = predicate->options;
+
+    gcladosFreePredicate(&(options->predicate));
+}
+
 GcladosPredicate gcladosEach(GcladosPredicate elementPredicate, size_t elementSize, size_t arrayLength) {
     GcladosArrayPredicateOptions *options = malloc(sizeof(GcladosArrayPredicateOptions));
 
@@ -66,6 +72,7 @@ GcladosPredicate gcladosEach(GcladosPredicate elementPredicate, size_t elementSi
             .expectedValueToString = (GcladosValueToStringConverter) gcladosEachMessage,
             .receivedValueToString = (GcladosValueToStringConverter) gcladosEachMessage,
             .options = options,
+            .free = gcladosFreeEachPredicate,
     };
 
     return predicate;

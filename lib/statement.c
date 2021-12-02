@@ -18,7 +18,7 @@ void gcladosCreateStatement(int line, char *filePath, void *value, GcladosPredic
         result->failMessage = gcladosGetFailedStatementMessage(pass, predicate, value);
     }
 
-    free(predicate.options);
+    gcladosFreePredicate(&predicate);
 
     gcladosAddStatementResult(result);
 }

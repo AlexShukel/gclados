@@ -5,13 +5,16 @@
 
 typedef char *(*GcladosValueToStringConverter)(void *value, void *options, bool pass);
 
-typedef struct {
+typedef struct GcladosPredicate {
     bool (*execute)(void *value, void *options);
     char *usage;
     bool customOutput;
     GcladosValueToStringConverter expectedValueToString;
     GcladosValueToStringConverter receivedValueToString;
     void *options;
+    void (*free)(struct GcladosPredicate *this);
 } GcladosPredicate;
+
+void gcladosFreePredicate(GcladosPredicate *predicate);
 
 #endif
