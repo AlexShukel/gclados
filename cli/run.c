@@ -107,10 +107,10 @@ int executeRun(RunCommandOptions *options) {
 
         int status = system(compiled);
 
-        if(status) {
+        if(status != 0 && status != 256) {
             char buffer[100];
 
-            sprintf(buffer, "Running tests failed with non-zero exit code. (%s)", strsignal(status));
+            sprintf(buffer, "Running tests failed with non-zero exit code. (%d)", status);
             gcladosPanic(buffer, status);
         }
 
