@@ -116,7 +116,7 @@ char *compileTestEntry(char *entryFilePath, RunCommandOptions options) {
 
 // Function, that executes "run" command.
 int executeRun(RunCommandOptions *options) {
-    if(options->paths != NULL && options->paths->gl_pathc > 0) {
+    if(options->paths == NULL || options->paths->gl_pathc == 0) {
         printf("No tests found.\n");
 
         return EXIT_FAILURE;

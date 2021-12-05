@@ -1,0 +1,1 @@
+gclados generate --output ./generated.c *.test.c
