@@ -14,6 +14,6 @@
 // Returns:
 //     Temporary file name, containing generated entry code. This string should be utilized after using it, by calling
 //     free.
-char *buildTestFile(const ParsedTestFile testFiles[], size_t count);
+int buildTestFile(const char *outputFile, const ParsedTestFile testFiles[], size_t count);
 
 #endif

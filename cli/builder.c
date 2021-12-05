@@ -13,14 +13,8 @@
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 
-char *buildTestFile(const ParsedTestFile testFiles[], const size_t count) {
-    // Generating temporary filename for output.
-    char *filename = tmpNameExtended(".c");
-    if(filename == NULL) {
-        gcladosPanic("Could not create temporary file for tests entrypoint.", EXIT_FAILURE);
-    }
-
-    FILE *outputFile = fopen(filename, "w");
+int buildTestFile(const char *outputFileName, const ParsedTestFile testFiles[], size_t count) {
+    FILE *outputFile = fopen(outputFileName, "w");
 
     // Including required modules at the file beginning.
     fprintf(outputFile, "#include \"gclados.h\"\n#include <stdbool.h>\n");
@@ -75,7 +69,7 @@ char *buildTestFile(const ParsedTestFile testFiles[], const size_t count) {
 
     fclose(outputFile);
 
-    return filename;
+    return 0;
 }
 
 #undef STR_VALUE

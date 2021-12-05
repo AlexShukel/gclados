@@ -53,9 +53,20 @@ void **parseArguments(const Argument arguments[], int argumentCount, int *argc, 
 // Returns:
 //     Variable of type Argument. To parse this argument, pass it to **parseArguments** function.
 // UX:
-//     User can toggle this argument value by specifying --<argument-name> <value> (where <argument-name>> is specified
+//     User can toggle this argument value by specifying --<argument-name> <value> (where <argument-name> is specified
 //     name, and <value> is literal strings "true" or "false") in command line. Also, to turn on this flag, short syntax
 //     could be used: --<argument-name>.
 Argument createBoolArgument(const char *name, const char *description);
+
+// Function, which creates new boolean argument (flag).
+// Parameters:
+//     *name        - argument name. Described in the UX section where referred to as <argument-name>
+//     *description - description of argument. It's recommended to describe the usage / purpose of argument there.
+// Returns:
+//     Variable of type Argument. To parse this argument, pass it to **parseArguments** function.
+// UX:
+//     User can specify value by writing --<argument-name> <value> (where <argument-name> is specified name, and <value>
+//     is any non-empty string) in command line.
+Argument createStringArgument(const char *name, const char *description);
 
 #endif

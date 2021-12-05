@@ -111,3 +111,44 @@ Argument createBoolArgument(const char *name, const char *description) {
 
     return newArgument;
 }
+
+ArgumentParseResult *tryParseStringArgument(const Argument *argument, const int argc, const char *argv[]) {
+    if(argc < 2) {
+        return NULL;
+    }
+
+    // Prefixing argument name with double hyphen.
+    char *fullArgumentName = calloc(strlen(argument->name) + 2, sizeof(char));
+    strcat(fullArgumentName, "--");
+    strcat(fullArgumentName, argument->name);
+
+    // Checking argument name.
+    int comparisonResult = strcmp(fullArgumentName, argv[0]);
+
+    free(fullArgumentName);
+
+    if(comparisonResult == 0 && strcmp(argv[1], "--") != 0) {
+        char *value = calloc(strlen(argv[1]), sizeof(char));
+        strcpy(value, argv[1]);
+
+        ArgumentParseResult *result = malloc(sizeof(ArgumentParseResult));
+
+        result->elementsParsed = 2;
+        result->parsedValue = value;
+
+        return result;
+    }
+
+    // Parsing failed, returning NULL
+    return NULL;
+}
+
+Argument createStringArgument(const char *name, const char *description) {
+    Argument newArgument = {
+            .name = name,
+            .description = description,
+            .tryParse = tryParseStringArgument,
+    };
+
+    return newArgument;
+}

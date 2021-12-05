@@ -101,9 +101,15 @@ int executeRun(RunCommandOptions *options) {
             parsedFiles[i] = parseTestFile(options->paths->gl_pathv[i]);
         }
 
-        char *testFile = buildTestFile(parsedFiles, options->paths->gl_pathc);
+        // Generating temporary filename for output.
+        char *filename = tmpNameExtended(".c");
+        if(filename == NULL) {
+            gcladosPanic("Could not create temporary file for tests entrypoint.", EXIT_FAILURE);
+        }
 
-        char *compiled = compileTestEntry(testFile, *options);
+        buildTestFile(filename, parsedFiles, options->paths->gl_pathc);
+
+        char *compiled = compileTestEntry(filename, *options);
 
         int status = system(compiled);
 
@@ -114,8 +120,8 @@ int executeRun(RunCommandOptions *options) {
             gcladosPanic(buffer, status);
         }
 
-        free(options->paths);
-        free(testFile);
+        globfree(options->paths);
+        free(filename);
         free(compiled);
     } else {
         printf("No tests found.\n");

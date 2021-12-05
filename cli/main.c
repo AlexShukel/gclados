@@ -4,6 +4,7 @@
 
 #include "args.h"
 #include "gclados.h"
+#include "generate.h"
 #include "help.h"
 #include "run.h"
 
@@ -45,10 +46,12 @@ int main(int argc, char *argv[]) {
     gcladosColors.setColorsSupported(arguments.colors);
 
     Command runCmd = createRunCommand();
+    Command generateCmd = createGenerateCommand();
     Command helpCmd = createHelpCommand();
     Command allCommands[] = {
             helpCmd,
             runCmd,
+            generateCmd,
     };
     Command *currentCommand = NULL;
 

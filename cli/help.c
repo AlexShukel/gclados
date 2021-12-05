@@ -10,7 +10,8 @@ const char generalHelpText[] = "Usage: gclados <command> [options]\n"
                                "Commands:\n"
                                "  help             Show general help. If there is a command name after, shows help "
                                "for the specified command.\n"
-                               "  run              Execute tests.\n";
+                               "  run              Execute tests.\n"
+                               "  generate         Only generate entrypoint for tests.\n";
 
 typedef enum
 {
