@@ -1,9 +1,19 @@
-#ifndef __PTF_BUILDER_H__
-#define __PTF_BUILDER_H__
+// Author: Artiom Tretjakovas
+// Description: This file contains functions for building tests entry file.
+
+#ifndef GCLADOS_BUILDER_H
+#define GCLADOS_BUILDER_H
 
 #include "filenameUtils.h"
 #include "testParser.h"
 
-char *buildTestFile(ParsedTestFile *testFiles, size_t count);
+// Function, for building test entry file.
+// Parameters:
+//     testFiles[] - array of parsed test files.
+//     count       - count of parsed test files.
+// Returns:
+//     Temporary file name, containing generated entry code. This string should be utilized after using it, by calling
+//     free.
+char *buildTestFile(const ParsedTestFile testFiles[], size_t count);
 
 #endif

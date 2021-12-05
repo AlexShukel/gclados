@@ -1,11 +1,15 @@
-#ifndef __PTF_COMMAND_H__
-#define __PTF_COMMAND_H__
+// Author: Artiom Tretjakovas.
+// Description: This file contains the abstract structure for commands to be run through the command line.
 
+#ifndef GCLADOS_COMMAND_H
+#define GCLADOS_COMMAND_H
+
+// Structure, containing necessary information for running it via command line.
 typedef struct {
-    char *slug;
-    char *helperText;
-    void *(*parseArgs)(int argc, char *argv[]);
-    int (*execute)(void *args);
+    const char *slug;
+    const char *helperText;
+    void *(*parseArgs)(const int argc, const char *argv[]);
+    const int (*execute)(const void *args);
 } Command;
 
 #endif
