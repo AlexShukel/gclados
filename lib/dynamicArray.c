@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of DynamicArray. Function prototypes are described in "dynamicArray.h"
+//              file.
+
 #include "dynamicArray.h"
 
 #include <signal.h>
@@ -5,7 +9,7 @@
 
 #include "panic.h"
 
-GcladosDynamicArray *gcladosCreateDynamicArray(size_t elementSize) {
+GcladosDynamicArray *gcladosCreateDynamicArray() {
     GcladosDynamicArray *array = malloc(sizeof(GcladosDynamicArray));
 
     array->buffer = NULL;
@@ -33,6 +37,7 @@ void gcladosSet(GcladosDynamicArray *array, size_t index, void *element) {
 
 void gcladosPush(GcladosDynamicArray *array, void *element) {
     if(array->capacity < array->length + 1) {
+        // Increasing array capacity.
         array->capacity = array->capacity == 0 ? 1 : array->capacity * 2;
         array->buffer = realloc(array->buffer, array->capacity * sizeof(void *));
     }

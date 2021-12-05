@@ -1,3 +1,6 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains necessary functions for manipulating test suites.
+
 #ifndef GCLADOS_TEST_SUITE_H
 #define GCLADOS_TEST_SUITE_H
 
@@ -5,7 +8,9 @@
 
 #include "test.h"
 
-typedef enum {
+// Enum, which describes suite status.
+typedef enum
+{
     GCLADOS_PASS,
     GCLADOS_FAILED,
     GCLADOS_WAITING,
@@ -13,12 +18,14 @@ typedef enum {
     GCLADOS_SKIP,
 } GcladosTestSuiteStatus;
 
+// Structure, which saves results of test suite.
 typedef struct {
     const char *testSuiteName;
     GcladosTest *tests;
     size_t testCount;
 } GcladosTestSuite;
 
+// Structure, which saves accumulated test suite result.
 typedef struct {
     GcladosTestSuiteStatus status;
     GcladosTestResult *testResults;

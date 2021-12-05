@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of test suite manipulation functions. Function prototypes are
+//              described in "testSuite.h" file.
+
 #include "testSuite.h"
 
 #include <stdio.h>

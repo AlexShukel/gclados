@@ -37,7 +37,7 @@ typedef struct Argument {
 //     *argv[]       - pointer to the array of strings (raw arguments), from the **main** method. Will be
 //                            mutated.
 // Returns:
-//     Pointer to the array of void*. This array contains parsed argument values. This array should be utilized after
+//     Pointer to the array of void*. This array contains parsed argument values. This array should be disposed after
 //     usage, by calling free function for each parsed argument and whole array.
 // Notes:
 //     * This function mutates argc and argv arguments. In the result, argv will contain all not parsed arguments, and

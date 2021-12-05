@@ -1,13 +1,18 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of the boolean predicates. Function prototypes are described in
+// "boolPredicates.h"
+
 #include "boolPredicates.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// Boolean predicate logic.
 bool gcladosBoolPredicate(const bool *value, const bool *options) {
     return *options ? *value : !(*value);
 }
 
+// Boolean to string converter.
 char *gcladosBoolToString(bool value) {
     char *message = calloc(6, sizeof(char));
 
@@ -16,10 +21,12 @@ char *gcladosBoolToString(bool value) {
     return message;
 }
 
+// Function, that converts expected boolean value to string.
 char *gcladosBoolExpectedValueToString(const bool *value, const bool *options, const bool pass) {
     return gcladosBoolToString(pass == !(*options));
 }
 
+// Function, that converts received boolean value to string.
 char *gcladosBoolReceivedValueToString(const bool *value, const bool *options, const bool pass) {
     return gcladosBoolToString(*value);
 }

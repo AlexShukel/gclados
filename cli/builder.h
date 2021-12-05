@@ -13,7 +13,7 @@
 //     testFiles[] - array of parsed test files.
 //     count       - count of parsed test files.
 // Returns:
-//     Temporary file name, containing generated entry code. This string should be utilized after using it, by calling
+//     Temporary file name, containing generated entry code. This string should be disposed after using it, by calling
 //     free.
 int buildTestFile(const char *outputFile, const ParsedTestFile testFiles[], size_t count);
 

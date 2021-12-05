@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of functions which are necessary for handling statements. Function
+//              prototypes are described in "statement.h" file.
+
 #include "statement.h"
 
 #include <stdlib.h>

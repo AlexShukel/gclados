@@ -8,7 +8,7 @@
 // Parameters:
 //     *extension - file ending. Normally, prefixed with dot ("."). Example: ".txt", ".c", etc.
 // Returns:
-//     Pointer to temporary file name string. Should be utilized after using it, by calling free.
+//     Pointer to temporary file name string. Should be disposed after using it, by calling free.
 //     Returns NULL if generation failed.
 char *tmpNameExtended(char *extension);
 

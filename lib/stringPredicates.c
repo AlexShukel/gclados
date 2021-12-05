@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of string predicates. Function prototypes are described in
+//              "stringPredicates.h" file.
+
 #include "stringPredicates.h"
 
 #include <stdio.h>

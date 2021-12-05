@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of panic function.
+
+// These macros required, because panic function implementation differs for Windows and Linux OS.
 #if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__)
 #define OS_WINDOWS 1
 #elif defined(linux) || defined(unix) || defined(__unix) || defined(__unix__)

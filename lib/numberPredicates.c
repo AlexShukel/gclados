@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of number predicates. Function prototypes are defined in
+//              "numberPredicates.h" file.
+
 #include "numberPredicates.h"
 
 #include <stdbool.h>
@@ -145,6 +149,10 @@
                 (GcladosValueToStringConverter) gcladosToBeGreaterThanOrEqual##name##ExpectedValue,                    \
                 (GcladosValueToStringConverter) gclados##name##ValueToString);                                         \
     }
+
+// Predicates are described using macros, to avoid code duplication - code for all number-like values is the same, only
+// type of variables differ.
+// Macros are disposed at the end of file.
 
 NUMBER_PREDICATE(Char, signed char, "%c")
 NUMBER_PREDICATE(UnsignedChar, unsigned char, "%d")

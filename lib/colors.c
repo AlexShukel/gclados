@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of text coloring functions. Function prototypes are described in
+//              "colors.h" file.
+
 #include "colors.h"
 
 #include <stdarg.h>
@@ -6,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Variable, that saves color support.
 bool GCLADOS_SUPPORTED_COLORS = true;
 
 // ANSI codes taken from https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
@@ -37,12 +42,14 @@ char *gcladosApplyAnsiFlags(char *string, GcladosAnsiFlags flags) {
 
     char *newString = calloc(strlen(string) + flags.count * 3 + 6, sizeof(char));
 
+    // ANSI opening tag.
     int currentOffset = sprintf(newString, "\x1b[");
 
     for(int i = 0; i < flags.count; i++) {
         currentOffset += sprintf(newString + currentOffset, "%02d%c", flags.flags[i], i != flags.count - 1 ? ';' : 'm');
     }
 
+    // ANSI closing tag.
     sprintf(newString + currentOffset, "%s\x1b[%dm", string, GCLADOS_RESET);
 
     return newString;

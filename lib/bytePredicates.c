@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of byte predicates. The function prototypes are described in
+//              "bytePredicates.h" file.
+
 #include "bytePredicates.h"
 
 #include <stdlib.h>
@@ -5,11 +9,13 @@
 
 #include "ioutils.h"
 
+// Structure, that saves toEqualBytes predicate options.
 typedef struct GcladosEqualBytePredicateOptions {
     void *bytes;
     size_t count;
 } GcladosEqualBytePredicateOptions;
 
+// Function for converting expected value to hex string.
 char *gcladosToEqualBytesExpectedValue(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
     char *valueAsHex = gcladosConvertToHex(options->bytes, options->count);
 
@@ -24,6 +30,7 @@ char *gcladosToEqualBytesExpectedValue(void *value, const GcladosEqualBytePredic
     }
 }
 
+// Function for converting received value to hex string.
 char *gcladosToEqualBytesReceivedValue(void *value, const GcladosEqualBytePredicateOptions *options, bool pass) {
     if(pass) {
         return NULL;
@@ -32,19 +39,18 @@ char *gcladosToEqualBytesReceivedValue(void *value, const GcladosEqualBytePredic
     }
 }
 
+// Function for comparing two values from pointers by each byte.
 bool gcladosToEqualBytesPredicate(void *value, const GcladosEqualBytePredicateOptions *options) {
     unsigned char *realValue = (unsigned char *) value;
     unsigned char *expectedValue = (unsigned char *) options->bytes;
 
-    bool pass = true;
     for(int i = 0; i < options->count; i++) {
         if(realValue[i] != expectedValue[i]) {
-            pass = false;
-            break;
+            return false;
         }
     }
 
-    return pass;
+    return true;
 }
 
 GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {

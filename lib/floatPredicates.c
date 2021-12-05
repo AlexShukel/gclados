@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of float predicates. Function prototypes are in "floatPredicates.h"
+//              file.
+
 #include "floatPredicates.h"
 
 #include <float.h>
@@ -128,6 +132,10 @@
                                                                                                                        \
         return predicate;                                                                                              \
     }
+
+// Predicates are described using macros, to avoid code duplication - code for all float-like values is the same, only
+// type of variables differ.
+// Macros are disposed at the end of file.
 
 FLOAT_PREDICATE(Float, float, "%f", FLT_EPSILON)
 FLOAT_PREDICATE(Double, double, "%lf", DBL_EPSILON)

@@ -1,3 +1,6 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of not predicate. Function prototype is in "notPredicate.h" file.
+
 #include "notPredicate.h"
 
 #include <stdio.h>

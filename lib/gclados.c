@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementations of main functions. Function prototypes are defined in "gclados.h"
+//              file.
+
 #include "gclados.h"
 
 #include <stdio.h>

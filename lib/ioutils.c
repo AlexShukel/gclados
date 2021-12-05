@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of helper functions for manipulating stdio. Function prototypes are in
+//              "ioutils.h" file.
+
 #include "ioutils.h"
 
 #include <stdio.h>
@@ -12,6 +16,7 @@ void gcladosPrintLineNumber(int number, bool highlight) {
 }
 
 void gcladosPrintFileLines(FILE *file, int lineBegin, int lineEnd, int highlightedLine) {
+    // Throw error if lines does not exist.
     if(lineBegin < 1 || lineEnd < 1) {
         gcladosPanic("Begin and end lines should be not less than 1", EXIT_FAILURE);
     }

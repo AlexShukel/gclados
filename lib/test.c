@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of functions which are required for manipulating tests. Function
+//              prototypes are described in "test.h" file.
+
 #include "test.h"
 
 #include <stdio.h>

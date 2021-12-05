@@ -1,13 +1,19 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains the implementations of the array predicates. Function prototypes is in the
+// "arrayPredicates.h" file.
+
 #include "arrayPredicates.h"
 
 #include <stdio.h>
 
+// Structure for saving array predicate options.
 typedef struct {
     GcladosPredicate predicate;
     size_t elementSize;
     size_t arrayLength;
 } GcladosArrayPredicateOptions;
 
+// "each" predicate logic.
 bool gcladosEachPredicate(char **value, const GcladosArrayPredicateOptions *options) {
     for(size_t i = 0; i < options->arrayLength; ++i) {
         if(!options->predicate.execute((*value) + i * options->elementSize, options->predicate.options)) {
@@ -18,6 +24,7 @@ bool gcladosEachPredicate(char **value, const GcladosArrayPredicateOptions *opti
     return true;
 }
 
+// Received / expected value converter to string for the "each" predicate.
 char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *options, bool pass) {
     char *message = calloc(1024, sizeof(char));
 
@@ -52,12 +59,14 @@ char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *optio
     return message;
 }
 
+// Cleanup for the "each" predicate.
 void gcladosFreeEachPredicate(GcladosPredicate *predicate) {
     GcladosArrayPredicateOptions *options = predicate->options;
 
     gcladosFreePredicate(&(options->predicate));
 }
 
+// "each" predicate constructor.
 GcladosPredicate gcladosEach(GcladosPredicate elementPredicate, size_t elementSize, size_t arrayLength) {
     GcladosArrayPredicateOptions *options = malloc(sizeof(GcladosArrayPredicateOptions));
 

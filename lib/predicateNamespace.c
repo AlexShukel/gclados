@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains bindings for all available predicates. The types are described in
+//              "predicateNamespace.h" file.
+
 #include "predicateNamespace.h"
 
 #include "arrayPredicates.h"
