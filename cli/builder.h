@@ -9,6 +9,7 @@
 
 // Function, for building test entry file.
 // Parameters:
+//     *outputFile - path to the file, to which output will be written.
 //     testFiles[] - array of parsed test files.
 //     count       - count of parsed test files.
 // Returns:

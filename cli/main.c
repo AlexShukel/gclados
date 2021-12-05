@@ -1,3 +1,6 @@
+// Author: Artiom Tretjakovas
+// Description: Entrypoint for the GcLaDOS cli.
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,10 +11,12 @@
 #include "help.h"
 #include "run.h"
 
+// Structure, that is used for saving general (global) CLI arguments.
 typedef struct {
     bool colors;
 } GeneralArguments;
 
+// Function for parsing general arguments.
 GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
     Argument generalArguments[] = {
             createBoolArgument("colors", "Enables / disables stdout coloring with ANSI escape codes."),
@@ -24,6 +29,7 @@ GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
     if(values[0] != NULL) {
         generalArgumentValues.colors = *((bool *) values[0]);
     } else {
+        // By default, colored output is enabled.
         generalArgumentValues.colors = true;
     }
 
@@ -31,6 +37,7 @@ GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+    // If no CLI arguments specified, printing general help.
     if(argc == 1) {
         printGeneralHelp();
 
@@ -64,6 +71,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Unknown command got.
     if(currentCommand == NULL) {
         char buffer[100];
         sprintf(buffer,
@@ -73,11 +81,12 @@ int main(int argc, char *argv[]) {
         gcladosPanic(buffer, EXIT_FAILURE);
     }
 
-    void *opts = currentCommand->parseArgs(argc, argv);
+    void *opts = currentCommand->parseArgs(argc, (const char **) argv);
 
     if(opts != NULL) {
         return currentCommand->execute(opts);
     } else {
+        // Failed to parse command options.
         return EXIT_FAILURE;
     }
 }

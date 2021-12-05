@@ -1,8 +1,12 @@
-#include "help.h"
-#include "stdio.h"
-#include "stdlib.h"
+// Author: Artiom Tretjakovas
+// Description: This file contains implementation of "gclados help" command. Function prototypes is in "help.h"
+//              file.
 
-// General C language analysis-driven orchestration system.
+#include "help.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 const char generalHelpText[] = "Usage: gclados <command> [options]\n"
                                "General options:\n"
                                "  --no-colors      Disable colored output. Recommended for terminals, "
@@ -13,17 +17,20 @@ const char generalHelpText[] = "Usage: gclados <command> [options]\n"
                                "  run              Execute tests.\n"
                                "  generate         Only generate entrypoint for tests.\n";
 
+// Enum, which is used to determine the type of help that should be displayed.
 typedef enum
 {
     ALL,
     COMMAND
 } HelpFor;
 
+// Structure, which saves options for the help command.
 typedef struct {
     HelpFor helpFor;
     struct Command *command;
 } HelpCommandOptions;
 
+// Function used to parse arguments for the help command.
 HelpCommandOptions *parseHelpArgs(int argc, char *argv[]) {
     HelpCommandOptions *options = malloc(sizeof(HelpCommandOptions));
 
@@ -37,6 +44,7 @@ HelpCommandOptions *parseHelpArgs(int argc, char *argv[]) {
     return options;
 }
 
+// Function which prints general help text.
 void printGeneralHelp() {
     printf("%s", generalHelpText);
 }
@@ -54,8 +62,8 @@ int executeHelp(HelpCommandOptions *options) {
 Command createHelpCommand() {
     Command helpCommand = {"help",
                            "This is help command",
-                           (void *(*) (int, char *[])) parseHelpArgs,
-                           (int(*)(void *)) executeHelp};
+                           (void *(*) (const int, const char **) ) parseHelpArgs,
+                           (const int (*)(const void *)) executeHelp};
 
     return helpCommand;
 }

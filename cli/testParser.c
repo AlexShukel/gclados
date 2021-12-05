@@ -1,3 +1,7 @@
+// Author: Artiom Tretjakovas
+// Description: This file contains the implementation of test file parsing functions. The function prototypes are
+//              defined in "testParser.h" file.
+
 #include "testParser.h"
 
 #include <ctype.h>
@@ -6,14 +10,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char PTR_TEST_TOKEN[] = "TEST(";
-const int PTR_TEST_TOKEN_LENGTH = sizeof(PTR_TEST_TOKEN) / sizeof(char);
+// TEST macro name, which is used to identify tests in file.
+const char GCLADOS_TEST_TOKEN[] = "TEST(";
+// The length of GCLADOS_TEST_TOKEN.
+const int GCLADOS_TEST_TOKEN_LENGTH = sizeof(GCLADOS_TEST_TOKEN) / sizeof(char);
+// The buffer length that is processed by parser.
 const int testFileBufferSize = 1024;
 
+// Function, that checks if string points to the test token beginning.
 bool isToken(const char *ptr) {
 
-    for(int i = 0; i < PTR_TEST_TOKEN_LENGTH - 1; i++) {
-        if(ptr[i] != PTR_TEST_TOKEN[i]) {
+    for(int i = 0; i < GCLADOS_TEST_TOKEN_LENGTH - 1; i++) {
+        if(ptr[i] != GCLADOS_TEST_TOKEN[i]) {
             return false;
         }
     }
@@ -21,6 +29,7 @@ bool isToken(const char *ptr) {
     return true;
 }
 
+// Function, which removes whitespaces at the beginning and end of string.
 void trimWhitespaces(char *string) {
     int begin = 0;
     int end = 0;
@@ -84,7 +93,7 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, Parse
             while(i < lastIndex && buffer[i] != '"')
                 i += 1 + (buffer[i] == '\\');
         } else if(isspace(buffer[i - 1]) && isToken(buffer + i)) {
-            i += PTR_TEST_TOKEN_LENGTH - 1;
+            i += GCLADOS_TEST_TOKEN_LENGTH - 1;
 
             size_t beginPoint = i;
 
@@ -112,6 +121,7 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, Parse
     return currentTest;
 }
 
+// TODO: rewrite this function
 ParsedTestFile parseTestFile(char *path) {
     FILE *file = fopen(path, "r");
 
