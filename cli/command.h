@@ -9,7 +9,9 @@ typedef struct {
     // Command name. Will be used to identify it. Should be unique.
     const char *slug;
     // Text, which will be displayed on "gclados help <command-name>", where <command-name> is specified command slug.
-    const char *helperText;
+    const char *help;
+    // Text, which shortly describes command. Will be visible on general help and at the beginning of specific help.
+    const char *shortHelp;
     // Function to parse arguments.
     // Parameters:
     //     argc - argument count, from the **main**.

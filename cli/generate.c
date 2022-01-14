@@ -8,11 +8,34 @@
 #include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "args.h"
 #include "builder.h"
-#include "testParser.h"
+#include "gclados.h"
+#include "globUtils.h"
+
+// Command specific strings
+const char GEN_COMMAND_SLUG[] = "generate";
+const char GEN_COMMAND_SHORT_HELP[] = "Generate entrypoint for specified tests.";
+const char GEN_COMMAND_HELP[] =
+        "Generate entrypoint for tests, that match specified glob patterns.\n"
+        "Usually, this command is used when it is necessary to use other compiler (not GCC).\n"
+        "Options:\n"
+        "  --output - Specify path to the output file. If not specified, output will appear in stdout.\n"
+        "  --colors - Enables / disables colored mode. Recommended for terminals, which do not support them.\n"
+        "   ...rest - The rest of the parameters will be treated as glob patterns.\n";
+
+// Exceptions
+const char ECREATE_OUTPUT_FAILED[] = "Failed creating output file.\n";
+const char EGEN_FAILED[] = "Generation failure.\n";
+const char EGEN_NO_TESTS[] = "No tests found.\n";
+
+// Info messages
+const char GEN_SUCCESS_STDOUT[] = "Generation success.\n";
+const char GEN_SUCCESS_OUTFILE[] = "Generation succeeded, output written to \"%s\".\n";
+
+// Options
+const char OUTPUT_OPTION_SLUG[] = "output";
 
 // Structure for saving options for the generate command.
 typedef struct {
@@ -27,7 +50,9 @@ GenerateCommandOptions *parseGenerateArgs(int argc, char *argv[]) {
     // Allocating space for options.
     GenerateCommandOptions *options = malloc(sizeof(GenerateCommandOptions));
 
-    Argument arguments[] = {createStringArgument("output", "Specify output file.")};
+    Argument arguments[] = {
+            createStringArgument(OUTPUT_OPTION_SLUG, NULL),
+    };
 
     // Parsing arguments.
     void **parsedArguments = parseArguments(arguments, sizeof(arguments) / sizeof(Argument), &argc, argv);
@@ -38,23 +63,7 @@ GenerateCommandOptions *parseGenerateArgs(int argc, char *argv[]) {
     free(parsedArguments);
 
     if(argc > 0) {
-        // Running glob for all specified paths.
-
-        glob_t *globBuffer = malloc(sizeof(glob_t));
-        memset(globBuffer, 0, sizeof(glob_t));
-
-        globBuffer->gl_pathc = 0;
-        globBuffer->gl_pathv = NULL;
-        globBuffer->gl_offs = 0;
-
-        for(int i = 0; i < argc; i++) {
-            if(glob(argv[i], GLOB_APPEND, NULL, globBuffer) != 0) {
-                printf("Matching %s glob pattern failed: %s\n", argv[i], strerror(errno));
-                return NULL;
-            }
-        }
-
-        options->paths = globBuffer;
+        options->paths = matchAll((const char **) argv, argc);
     } else {
         options->paths = NULL;
     }
@@ -64,20 +73,9 @@ GenerateCommandOptions *parseGenerateArgs(int argc, char *argv[]) {
 
 // Function, which executes generate command.
 int executeGenerate(const GenerateCommandOptions *options) {
-    // Failure if output file is NULL.
-    if(options->outputFile == NULL) {
-        if(options->paths != NULL) {
-            globfree(options->paths);
-        }
-        free((GenerateCommandOptions *) options);
-
-        printf("Not output file specified.\n");
-        return 1;
-    }
-
     // Failure if no tests specified.
     if(options->paths == NULL || options->paths->gl_pathc == 0) {
-        printf("No tests found.\n");
+        fprintf(stderr, EGEN_NO_TESTS);
 
         if(options->paths != NULL) {
             globfree(options->paths);
@@ -95,13 +93,23 @@ int executeGenerate(const GenerateCommandOptions *options) {
         parsedFiles[i] = parseTestFile(options->paths->gl_pathv[i]);
     }
 
+    FILE *outputFile = options->outputFile == NULL ? stdout : fopen(options->outputFile, "w");
+
+    if(outputFile == NULL) {
+        gcladosPanic(ECREATE_OUTPUT_FAILED, EXIT_FAILURE);
+    }
+
     // Building test entry.
-    int buildStatus = buildTestFile(options->outputFile, parsedFiles, options->paths->gl_pathc);
+    int buildStatus = buildTestFile(outputFile, parsedFiles, options->paths->gl_pathc);
+
+    if(options->outputFile != NULL) {
+        fclose(outputFile);
+    }
 
     if(buildStatus) {
-        printf("Generation failure.\n");
+        fprintf(stderr, EGEN_FAILED);
     } else {
-        printf("Generation succeeded: output written to \"%s\".\n", options->outputFile);
+        printf(options->outputFile == NULL ? GEN_SUCCESS_STDOUT : GEN_SUCCESS_OUTFILE, options->outputFile);
     }
 
     // Cleanups.
@@ -114,10 +122,11 @@ int executeGenerate(const GenerateCommandOptions *options) {
 
 Command createGenerateCommand() {
     Command runCommand = {
-            "generate",
-            "Command, which generates test entry from specified files",
-            (void *(*) (const int, const char **) ) parseGenerateArgs,
-            (const int (*)(const void *)) executeGenerate,
+            .slug = GEN_COMMAND_SLUG,
+            .shortHelp = GEN_COMMAND_SHORT_HELP,
+            .help = GEN_COMMAND_HELP,
+            .parseArgs = (void *(*) (const int, const char **) ) parseGenerateArgs,
+            .execute = (const int (*)(const void *)) executeGenerate,
     };
 
     return runCommand;

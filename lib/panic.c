@@ -26,7 +26,7 @@
 
 void gcladosPrintBacktrace(FILE *file);
 
-void gcladosPanic(char *message, int exitCode) {
+void gcladosPanic(const char *message, int exitCode) {
     fflush(stdout);
     fprintf(stderr, "GcLaDOS panicked: %s\n", message);
     gcladosPrintBacktrace(stderr);

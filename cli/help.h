@@ -9,7 +9,7 @@
 // Function, which creates help command instance.
 // Returns:
 //     Instance of Command structure. Should be used in **main** method.
-Command createHelpCommand();
+Command createHelpCommand(Command *commands[], unsigned long commandCount);
 
 // Function, which prints general cli help into stdout.
 void printGeneralHelp();

@@ -54,19 +54,21 @@ int main(int argc, char *argv[]) {
 
     Command runCmd = createRunCommand();
     Command generateCmd = createGenerateCommand();
-    Command helpCmd = createHelpCommand();
-    Command allCommands[] = {
-            helpCmd,
-            runCmd,
-            generateCmd,
+    Command helpCmd;
+    Command *allCommands[] = {
+            &runCmd,
+            &generateCmd,
+            &helpCmd,
     };
+    size_t commandCount = sizeof(allCommands) / sizeof(Command *);
+
+    helpCmd = createHelpCommand(allCommands, commandCount);
+
     Command *currentCommand = NULL;
 
-    int commandCount = sizeof(allCommands) / sizeof(Command);
-
-    for(int i = 0; i < commandCount; ++i) {
-        if(strcmp(allCommands[i].slug, commandSlug) == 0) {
-            currentCommand = &allCommands[i];
+    for(size_t i = 0; i < commandCount; ++i) {
+        if(strcmp(allCommands[i]->slug, commandSlug) == 0) {
+            currentCommand = allCommands[i];
             break;
         }
     }

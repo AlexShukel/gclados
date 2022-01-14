@@ -13,9 +13,7 @@
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 
-int buildTestFile(const char *outputFileName, const ParsedTestFile testFiles[], size_t count) {
-    FILE *outputFile = fopen(outputFileName, "w");
-
+int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t count) {
     // Including required modules at the file beginning.
     fprintf(outputFile, "#include \"gclados.h\"\n#include <stdbool.h>\n");
 
@@ -66,8 +64,6 @@ int buildTestFile(const char *outputFileName, const ParsedTestFile testFiles[], 
     fprintf(outputFile, "    };\n    return gcladosRunTestSuites(gcladosTestSuites, %ld);\n", count);
 
     fprintf(outputFile, "}\n");
-
-    fclose(outputFile);
 
     return 0;
 }
