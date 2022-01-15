@@ -29,17 +29,18 @@
         return gclados##name##ToString(*value);                                                                        \
     }                                                                                                                  \
                                                                                                                        \
-    GcladosPredicate gcladosCreate##name##Predicate(const type value,                                                  \
-                                                    bool (*execute)(const type *value, const type *options),           \
-                                                    const char *usage,                                                 \
-                                                    GcladosValueToStringConverter expectedValueToString,               \
-                                                    GcladosValueToStringConverter receivedValueToString) {             \
+    GcladosPredicate gcladosCreate##name##Predicate(                                                                   \
+            const type value,                                                                                          \
+            bool (*execute)(StatementContext, const type *value, const type *options),                                 \
+            const char *usage,                                                                                         \
+            GcladosValueToStringConverter expectedValueToString,                                                       \
+            GcladosValueToStringConverter receivedValueToString) {                                                     \
         type *options = malloc(sizeof(type));                                                                          \
         *options = value;                                                                                              \
         GcladosPredicate predicate = {                                                                                 \
                 .options = options,                                                                                    \
                 .usage = (char *) usage,                                                                               \
-                .execute = (bool(*)(void *, void *)) execute,                                                          \
+                .execute = (bool(*)(StatementContext, void *, void *)) execute,                                        \
                 .expectedValueToString = expectedValueToString,                                                        \
                 .receivedValueToString = receivedValueToString,                                                        \
                 .free = NULL,                                                                                          \
@@ -48,7 +49,7 @@
         return predicate;                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToEqual##name##Predicate(const type *value, const type *options) {                                     \
+    bool gcladosToEqual##name##Predicate(StatementContext context, const type *value, const type *options) {           \
         return *value == *options;                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
@@ -82,7 +83,7 @@
                                               (GcladosValueToStringConverter) gcladosToEqual##name##ReceivedValue);    \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToBeLessThan##name##Predicate(const type *value, const type *options) {                                \
+    bool gcladosToBeLessThan##name##Predicate(StatementContext context, const type *value, const type *options) {      \
         return *value < *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
@@ -99,7 +100,7 @@
                 (GcladosValueToStringConverter) gclados##name##ValueToString);                                         \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToBeGreaterThan##name##Predicate(const type *value, const type *options) {                             \
+    bool gcladosToBeGreaterThan##name##Predicate(StatementContext context, const type *value, const type *options) {   \
         return *value > *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
@@ -116,7 +117,9 @@
                 (GcladosValueToStringConverter) gclados##name##ValueToString);                                         \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToBeLessThanOrEqual##name##Predicate(const type *value, const type *options) {                         \
+    bool gcladosToBeLessThanOrEqual##name##Predicate(StatementContext context,                                         \
+                                                     const type *value,                                                \
+                                                     const type *options) {                                            \
         return *value <= *options;                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
@@ -133,7 +136,9 @@
                 (GcladosValueToStringConverter) gclados##name##ValueToString);                                         \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToBeGreaterThanOrEqual##name##Predicate(const type *value, const type *options) {                      \
+    bool gcladosToBeGreaterThanOrEqual##name##Predicate(StatementContext context,                                      \
+                                                        const type *value,                                             \
+                                                        const type *options) {                                         \
         return *value >= *options;                                                                                     \
     }                                                                                                                  \
                                                                                                                        \

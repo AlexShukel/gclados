@@ -10,6 +10,7 @@
 #include "floatPredicates.h"
 #include "notPredicate.h"
 #include "numberPredicates.h"
+#include "snapshots.h"
 #include "stringPredicates.h"
 
 #define NUMBER_PREDICATE_ASSIGNMENTS(name)                                                                             \
@@ -41,6 +42,7 @@ GcladosPredicateNamespace gclados = {
         .toBeFalsy = gcladosToBeFalsy,
         .each = gcladosEach,
         .toEqualBytes = gcladosToEqualBytes,
+        .toMatchSnapshot = gcladosToMatchSnapshot,
         .not = gcladosNot,
 };
 

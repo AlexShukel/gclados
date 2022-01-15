@@ -7,6 +7,10 @@
 #include "predicate.h"
 
 // Function, that executes given statement.
-void gcladosCreateStatement(int line, char *filePath, void *value, GcladosPredicate predicate);
+void gcladosCreateStatement(const char *functionName,
+                            int line,
+                            char *filePath,
+                            void *value,
+                            GcladosPredicate predicate);
 
 #endif

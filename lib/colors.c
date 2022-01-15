@@ -35,12 +35,12 @@ bool gcladosColorsSupported() {
 
 char *gcladosApplyAnsiFlags(char *string, GcladosAnsiFlags flags) {
     if(!gcladosColorsSupported()) {
-        char *newString = calloc(strlen(string), sizeof(char));
-        sprintf(newString, "%s", string);
+        char *newString = calloc(strlen(string) + 1, sizeof(char));
+        strcpy(newString, string);
         return newString;
     }
 
-    char *newString = calloc(strlen(string) + flags.count * 3 + 6, sizeof(char));
+    char *newString = calloc(strlen(string) + flags.count * 3 + 7, sizeof(char));
 
     // ANSI opening tag.
     int currentOffset = sprintf(newString, "\x1b[");

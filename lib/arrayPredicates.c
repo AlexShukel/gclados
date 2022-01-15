@@ -14,9 +14,9 @@ typedef struct {
 } GcladosArrayPredicateOptions;
 
 // "each" predicate logic.
-bool gcladosEachPredicate(char **value, const GcladosArrayPredicateOptions *options) {
+bool gcladosEachPredicate(StatementContext context, char **value, const GcladosArrayPredicateOptions *options) {
     for(size_t i = 0; i < options->arrayLength; ++i) {
-        if(!options->predicate.execute((*value) + i * options->elementSize, options->predicate.options)) {
+        if(!options->predicate.execute(context, (*value) + i * options->elementSize, options->predicate.options)) {
             return false;
         }
     }
@@ -35,7 +35,7 @@ char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *optio
         char *element = options->predicate.receivedValueToString(elementValue, options->predicate.options, pass);
 
         char *format;
-        bool elementPassed = !(options->predicate.execute(elementValue, options->predicate.options)) == pass;
+        bool elementPassed = !(options->predicate.execute((StatementContext){}, elementValue, options->predicate.options)) == pass;
 
         if(i == options->arrayLength - 1) {
             if(elementPassed) {
@@ -75,7 +75,7 @@ GcladosPredicate gcladosEach(GcladosPredicate elementPredicate, size_t elementSi
     options->arrayLength = arrayLength;
 
     GcladosPredicate predicate = {
-            .execute = (bool(*)(void *, void *)) gcladosEachPredicate,
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosEachPredicate,
             .usage = "gclados.each(%s, elementSize, arrayLength)",
             .customOutput = true,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosEachMessage,

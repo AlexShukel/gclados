@@ -29,7 +29,9 @@
         return value < 0 ? -value : value;                                                                             \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToEqual##name##Predicate(const type *value, const Gclados##name##Options *options) {                   \
+    bool gcladosToEqual##name##Predicate(StatementContext context,                                                     \
+                                         const type *value,                                                            \
+                                         const Gclados##name##Options *options) {                                      \
         return gclados##name##Abs(*value - options->value) <= options->precision / 2.0f;                               \
     }                                                                                                                  \
                                                                                                                        \
@@ -63,7 +65,7 @@
         options->precision = precision;                                                                                \
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
-                .execute = (bool(*)(void *, void *)) gcladosToEqual##name##Predicate,                                  \
+                .execute = (bool(*)(StatementContext, void *, void *)) gcladosToEqual##name##Predicate,                \
                 .usage = "gclados.toEqual" #name "(%s, precision)",                                                    \
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ExpectedValue,          \
                 .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqual##name##ReceivedValue,          \
@@ -74,7 +76,7 @@
         return predicate;                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
-    bool gcladosToBeLessThan##name##Predicate(const type *value, const type *options) {                                \
+    bool gcladosToBeLessThan##name##Predicate(StatementContext context, const type *value, const type *options) {      \
         return *value < *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
@@ -93,7 +95,7 @@
         *options = value;                                                                                              \
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
-                .execute = (bool(*)(void *, void *)) gcladosToBeLessThan##name##Predicate,                             \
+                .execute = (bool(*)(StatementContext, void *, void *)) gcladosToBeLessThan##name##Predicate,           \
                 .usage = "gclados.toBeLessThan" #name "(%s)",                                                          \
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeLessThan##name##ExpectedValue,     \
                 .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \
@@ -103,7 +105,7 @@
                                                                                                                        \
         return predicate;                                                                                              \
     }                                                                                                                  \
-    bool gcladosToBeGreaterThan##name##Predicate(const type *value, const type *options) {                             \
+    bool gcladosToBeGreaterThan##name##Predicate(StatementContext context, const type *value, const type *options) {   \
         return *value > *options;                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
@@ -122,7 +124,7 @@
         *options = value;                                                                                              \
                                                                                                                        \
         GcladosPredicate predicate = {                                                                                 \
-                .execute = (bool(*)(void *, void *)) gcladosToBeGreaterThan##name##Predicate,                          \
+                .execute = (bool(*)(StatementContext, void *, void *)) gcladosToBeGreaterThan##name##Predicate,        \
                 .usage = "gclados.toBeGreaterThan" #name "(%s)",                                                       \
                 .expectedValueToString = (GcladosValueToStringConverter) gcladosToBeGreaterThan##name##ExpectedValue,  \
                 .receivedValueToString = (GcladosValueToStringConverter) gclados##name##ValueToString,                 \

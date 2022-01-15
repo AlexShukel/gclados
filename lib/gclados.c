@@ -6,9 +6,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "ioutils.h"
+#include "snapshots.h"
 
 const char *GCLADOS_SUMMARY_ROW_FORMAT = "%12s: ";
 
@@ -31,32 +33,152 @@ void gcladosDrawSuites(const GcladosTestSuite suites[],
     }
 }
 
-void gcladosPrintSummary(char *name, size_t total, size_t passed) {
-    printf(GCLADOS_SUMMARY_ROW_FORMAT, name);
+typedef enum
+{
+    GCLADOS_SUMMARY_SUCCESS,
+    GCLADOS_SUMMARY_FAILURE,
+    GCLADOS_SUMMARY_NEUTRAL,
+} GcladosSummaryType;
 
-    if(passed < total) {
-        char buffer[30];
-        sprintf(buffer, "%ld failed", total - passed);
+typedef struct {
+    size_t count;
+    char *prefix;
+    GcladosSummaryType type;
+} GcladosSummary;
+
+void gcladosPrintSummaryCell(GcladosSummary summary) {
+    char *buffer = calloc(sizeof(char), 128);
+
+    sprintf(buffer, "%lu %s", summary.count, summary.prefix);
+
+    if(summary.type == GCLADOS_SUMMARY_NEUTRAL) {
+        printf("%s", buffer);
+    }
+
+    if(summary.type == GCLADOS_SUMMARY_FAILURE) {
         GcladosAnsiFlags flags =
                 gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
-        char *coloredOutput = gcladosColors.applyFlags(buffer, flags);
-        printf("%s, ", coloredOutput);
+        char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
+        printf("%s", colorizedBuffer);
+        free(colorizedBuffer);
         gcladosColors.freeFlags(flags);
-        free(coloredOutput);
     }
 
-    if(passed > 0) {
-        char buffer[30];
-        sprintf(buffer, "%ld passed", passed);
+    if(summary.type == GCLADOS_SUMMARY_SUCCESS) {
         GcladosAnsiFlags flags =
                 gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_GREEN), gcladosColors.bold());
-        char *coloredOutput = gcladosColors.applyFlags(buffer, flags);
-        printf("%s, ", coloredOutput);
+        char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
+        printf("%s", colorizedBuffer);
+        free(colorizedBuffer);
         gcladosColors.freeFlags(flags);
-        free(coloredOutput);
     }
 
-    printf("%ld total\n", total);
+    free(buffer);
+}
+
+void gcladosPrintSummaryRow(char *name, GcladosSummary *summaries, size_t summaryCount) {
+    printf(GCLADOS_SUMMARY_ROW_FORMAT, name);
+
+    bool atLeastOne = false;
+
+    for(size_t i = 0; i < summaryCount; ++i) {
+        if(summaries[i].count > 0) {
+            if(atLeastOne) {
+                printf(", ");
+            }
+
+            atLeastOne = true;
+            gcladosPrintSummaryCell(summaries[i]);
+        }
+    }
+    printf("\n");
+}
+
+void gcladosPrintSummary(size_t totalTestSuites,
+                         size_t passedTestSuites,
+                         size_t failedTestSuites,
+                         size_t totalTests,
+                         size_t passedTests,
+                         size_t failedTests,
+                         GcladosSnapshotStats snapshotSummaryStats,
+                         clock_t time) {
+
+    GcladosSummary testSuiteSummary[] = {
+            {
+                    .type = GCLADOS_SUMMARY_FAILURE,
+                    .count = failedTestSuites,
+                    .prefix = "failed",
+            },
+            {
+                    .type = GCLADOS_SUMMARY_SUCCESS,
+                    .count = passedTestSuites,
+                    .prefix = "passed",
+            },
+            {
+                    .type = GCLADOS_SUMMARY_NEUTRAL,
+                    .count = totalTestSuites,
+                    .prefix = "total",
+            },
+    };
+
+    gcladosPrintSummaryRow("Test suites", testSuiteSummary, sizeof(testSuiteSummary) / sizeof(GcladosSummary));
+
+    GcladosSummary testSummary[] = {
+            {
+                    .type = GCLADOS_SUMMARY_FAILURE,
+                    .count = totalTests - passedTests,
+                    .prefix = "failed",
+            },
+            {
+                    .type = GCLADOS_SUMMARY_SUCCESS,
+                    .count = passedTests,
+                    .prefix = "passed",
+            },
+            {
+                    .type = GCLADOS_SUMMARY_NEUTRAL,
+                    .count = totalTests,
+                    .prefix = "total",
+            },
+    };
+
+    gcladosPrintSummaryRow("Tests", testSummary, sizeof(testSummary) / sizeof(GcladosSummary));
+
+    if(snapshotSummaryStats.total > 0) {
+
+        GcladosSummary snapshotSummary[] = {
+                {
+                        .type = GCLADOS_SUMMARY_FAILURE,
+                        .count = snapshotSummaryStats.failed,
+                        .prefix = "failed",
+                },
+                {
+                        .type = GCLADOS_SUMMARY_SUCCESS,
+                        .count = snapshotSummaryStats.written,
+                        .prefix = "written",
+                },
+                {
+                        .type = GCLADOS_SUMMARY_SUCCESS,
+                        .count = snapshotSummaryStats.updated,
+                        .prefix = "updated",
+                },
+                {
+                        .type = GCLADOS_SUMMARY_SUCCESS,
+                        .count = snapshotSummaryStats.passed,
+                        .prefix = "passed",
+                },
+                {
+                        .type = GCLADOS_SUMMARY_NEUTRAL,
+                        .count = snapshotSummaryStats.total,
+                        .prefix = "total",
+                },
+        };
+
+        gcladosPrintSummaryRow("Snapshots", snapshotSummary, sizeof(snapshotSummary) / sizeof(GcladosSummary));
+    }
+
+    printf(GCLADOS_SUMMARY_ROW_FORMAT, "Time");
+    gcladosPrintTime(time);
+    printf("\n");
 }
 
 int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
@@ -87,22 +209,27 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
 
     gcladosDrawSuites(suites, results, count, false);
 
-    size_t totalTests = 0, passedTests = 0;
-    size_t totalTestSuites = count, passedTestSuites = 0;
+    size_t totalTests = 0, passedTests = 0, failedTests = 0;
+    size_t totalTestSuites = count, passedTestSuites = 0, failedTestSuites = 0;
 
     for(size_t i = 0; i < count; ++i) {
         passedTestSuites += results[i].status == GCLADOS_PASS;
+        failedTests += results[i].status == GCLADOS_FAILED;
         totalTests += suites[i].testCount;
         for(size_t j = 0; j < results[i].testResultCount; ++j) {
             passedTests += results[i].testResults[j].pass == true;
+            failedTests += results[i].testResults[j].pass == false;
         }
     }
 
-    gcladosPrintSummary("Test suites", totalTestSuites, passedTestSuites);
-    gcladosPrintSummary("Tests", totalTests, passedTests);
-    printf(GCLADOS_SUMMARY_ROW_FORMAT, "Time");
-    gcladosPrintTime(endTime - startTime);
-    printf("\n");
+    gcladosPrintSummary(totalTestSuites,
+                        passedTestSuites,
+                        failedTestSuites,
+                        totalTests,
+                        passedTests,
+                        failedTests,
+                        gcladosGetSnapshotStats(),
+                        endTime - startTime);
 
     for(size_t i = 0; i < count; ++i) {
         gcladosFreeTestSuiteResult(results[i]);

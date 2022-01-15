@@ -24,10 +24,10 @@ int gcladosRunTestSuites(GcladosTestSuite suites[], size_t count);
 #define GCLADOS_CONCAT_INNER(a, b) a##b
 #define GCLADOS_ENSURE_INNER(varName, value, predicate)                                                                \
     typeof(value)(varName) = value;                                                                                    \
-    gcladosCreateStatement(__LINE__, __FILE__, &(varName), predicate)
+    gcladosCreateStatement(__FUNCTION__, __LINE__, __FILE__, &(varName), predicate)
 #define GCLADOS_ENSURE_ARRAY_INNER(varName, value, predicate)                                                          \
     typeof((value)[0]) *(varName) = value;                                                                             \
-    gcladosCreateStatement(__LINE__, __FILE__, &(varName), predicate);
+    gcladosCreateStatement(__FUNCTION__, __LINE__, __FILE__, &(varName), predicate);
 
 // Prefix for all tests. This is required to avoid naming conflicts.
 // For example, if user has function "sum", when writing TEST(sum) the names could conflict. To prevent that, test name

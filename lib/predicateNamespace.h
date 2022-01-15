@@ -65,6 +65,8 @@ typedef struct {
 
     // This predicate checks if received value is equal to expected by comparing N bytes.
     GcladosPredicate (*toEqualBytes)(void *bytes, size_t n);
+    // TODO: add description
+    GcladosPredicate (*toMatchSnapshot)(size_t size);
 
     // Array predicates
 

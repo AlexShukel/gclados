@@ -8,7 +8,7 @@
 #include <string.h>
 
 // Boolean predicate logic.
-bool gcladosBoolPredicate(const bool *value, const bool *options) {
+bool gcladosBoolPredicate(StatementContext context, const bool *value, const bool *options) {
     return *options ? *value : !(*value);
 }
 
@@ -41,7 +41,7 @@ GcladosPredicate gcladosToBeTruthy() {
             .usage = "gclados.toBeTruthy()",
             .receivedValueToString = (GcladosValueToStringConverter) gcladosBoolReceivedValueToString,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosBoolExpectedValueToString,
-            .execute = (bool(*)(void *, void *)) gcladosBoolPredicate,
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosBoolPredicate,
             .free = NULL,
     };
 
@@ -58,7 +58,7 @@ GcladosPredicate gcladosToBeFalsy() {
             .usage = "gclados.toBeFalsy()",
             .receivedValueToString = (GcladosValueToStringConverter) gcladosBoolReceivedValueToString,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosBoolExpectedValueToString,
-            .execute = (bool(*)(void *, void *)) gcladosBoolPredicate,
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosBoolPredicate,
     };
 
     return predicate;

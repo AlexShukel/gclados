@@ -6,6 +6,8 @@
 
 #include <stdbool.h>
 
+#include "statementContext.h"
+
 typedef char *(*GcladosValueToStringConverter)(void *value, void *options, bool pass);
 
 // Structure, that saves information about predicate.
@@ -14,7 +16,7 @@ typedef struct GcladosPredicate {
     // Parameters:
     //     value   - received value.
     //     options - options, that are saved in this structure.
-    bool (*execute)(void *value, void *options);
+    bool (*execute)(StatementContext context, void *value, void *options);
     // String which describes how to use predicate.
     char *usage;
     // Boolean, used to determine should gclados print standard output (Expected / Received) or not.

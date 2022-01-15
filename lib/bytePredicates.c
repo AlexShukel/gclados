@@ -40,17 +40,8 @@ char *gcladosToEqualBytesReceivedValue(void *value, const GcladosEqualBytePredic
 }
 
 // Function for comparing two values from pointers by each byte.
-bool gcladosToEqualBytesPredicate(void *value, const GcladosEqualBytePredicateOptions *options) {
-    unsigned char *realValue = (unsigned char *) value;
-    unsigned char *expectedValue = (unsigned char *) options->bytes;
-
-    for(int i = 0; i < options->count; i++) {
-        if(realValue[i] != expectedValue[i]) {
-            return false;
-        }
-    }
-
-    return true;
+bool gcladosToEqualBytesPredicate(StatementContext context, void *value, const GcladosEqualBytePredicateOptions *options) {
+    return memcmp(value, options->bytes, options->count) == 0;
 }
 
 GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {
@@ -61,8 +52,8 @@ GcladosPredicate gcladosToEqualBytes(void *bytes, size_t count) {
 
     GcladosPredicate predicate = {
             .options = options,
-            .usage = "ptf.toEqualBytes(%s, someSize)",
-            .execute = (bool(*)(void *, void *)) gcladosToEqualBytesPredicate,
+            .usage = "gclados.toEqualBytes(%s, someSize)",
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosToEqualBytesPredicate,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesExpectedValue,
             .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqualBytesReceivedValue,
             .free = NULL,

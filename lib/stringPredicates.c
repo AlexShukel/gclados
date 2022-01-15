@@ -27,7 +27,7 @@ char *gcladosToEqualStringReceived(const char *value, const char *options, bool 
     }
 }
 
-bool gcladosToEqualStringPredicate(const char *value, const char *options) {
+bool gcladosToEqualStringPredicate(StatementContext context, const char *value, const char *options) {
     return strcmp(value, options) == 0;
 }
 
@@ -41,7 +41,7 @@ GcladosPredicate gcladosToEqualString(char *string) {
             .usage = "gclados.toEqualString(%s)",
             .customOutput = false,
             .free = NULL,
-            .execute = (bool(*)(void *, void *)) gcladosToEqualStringPredicate,
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosToEqualStringPredicate,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosToEqualStringExpected,
             .receivedValueToString = (GcladosValueToStringConverter) gcladosToEqualStringReceived,
     };

@@ -14,8 +14,8 @@ char *gcladosNotReceivedValue(void *value, GcladosPredicate *predicate, bool pas
     return predicate->receivedValueToString(value, predicate->options, !pass);
 }
 
-bool gcladosNotPredicate(void *value, GcladosPredicate *predicate) {
-    return !predicate->execute(value, predicate->options);
+bool gcladosNotPredicate(StatementContext context, void *value, GcladosPredicate *predicate) {
+    return !predicate->execute(context, value, predicate->options);
 }
 
 void gcladosFreeNotPredicate(GcladosPredicate *predicate) {
@@ -38,7 +38,7 @@ GcladosPredicate gcladosNot(GcladosPredicate optionsPredicate) {
             .customOutput = optionsPredicate.customOutput,
             .receivedValueToString = NULL,
             .expectedValueToString = (GcladosValueToStringConverter) gcladosNotExpectedValue,
-            .execute = (bool(*)(void *, void *)) gcladosNotPredicate,
+            .execute = (bool(*)(StatementContext, void *, void *)) gcladosNotPredicate,
             .free = gcladosFreeNotPredicate,
     };
 
