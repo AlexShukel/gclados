@@ -9,6 +9,7 @@
 #include "colors.h"
 #include "ioutils.h"
 #include "mutils.h"
+#include "snapshots.h"
 
 GcladosTest gcladosCreateTest(void (*executor)(), const char *description) {
     GcladosTest test = {
@@ -32,6 +33,7 @@ GcladosTestResult gcladosRunTest(GcladosTest test) {
     };
 
     currentResults = testResult.statementResults;
+    gcladosResetSnapshotCounter();
     test.execute();
     currentResults = NULL;
 

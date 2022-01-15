@@ -13,6 +13,7 @@ typedef struct {
 
 GcladosPredicate gcladosToMatchSnapshot(size_t size);
 void gcladosSetUpdateSnapshots(bool updateSnapshots);
+void gcladosResetSnapshotCounter();
 GcladosSnapshotStats gcladosGetSnapshotStats();
 
 #endif

@@ -16,6 +16,12 @@ typedef struct {
 
 bool GCLADOS_UPDATE_SNAPSHOTS = false;
 
+size_t GCLADOS_SNAPSHOT_INDEX_COUNTER = 0;
+
+void gcladosResetSnapshotCounter() {
+    GCLADOS_SNAPSHOT_INDEX_COUNTER = 0;
+}
+
 void gcladosSetUpdateSnapshots(bool updateSnapshots) {
     GCLADOS_UPDATE_SNAPSHOTS = updateSnapshots;
 }
@@ -83,7 +89,7 @@ FILE *gcladosOpenSnapshotFile(const char fileName[], const char modes[]) {
     return fopen(snapshotFilename, modes);
 }
 
-GcladosSnapshot *gcladosGetSnapshot(StatementContext context) {
+GcladosSnapshot *gcladosGetSnapshot(StatementContext context, size_t snapshotIndex) {
     FILE *snapshotFile = gcladosOpenSnapshotFile(context.fileName, "rb");
 
     if(snapshotFile == NULL) {
@@ -91,7 +97,7 @@ GcladosSnapshot *gcladosGetSnapshot(StatementContext context) {
     }
 
     char identifier[FILENAME_MAX];
-    gcladosConstructIdentifierName(context.functionName, 0, identifier);
+    gcladosConstructIdentifierName(context.functionName, snapshotIndex, identifier);
 
     if(gcladosMoveCursorToSnapshot(snapshotFile, identifier)) {
         GcladosSnapshot *snapshot = malloc(sizeof(GcladosSnapshot));
@@ -100,7 +106,6 @@ GcladosSnapshot *gcladosGetSnapshot(StatementContext context) {
         fread(snapshot->value, sizeof(char), snapshot->size, snapshotFile);
 
         fclose(snapshotFile);
-
         return snapshot;
     }
 
@@ -108,7 +113,7 @@ GcladosSnapshot *gcladosGetSnapshot(StatementContext context) {
     return NULL;
 }
 
-void gcladosSaveNewSnapshot(StatementContext context, void *value, size_t size) {
+void gcladosSaveNewSnapshot(StatementContext context, void *value, size_t size, size_t snapshotIndex) {
     gcladosSnapshotStats.written += 1;
 
     FILE *snapshotFile = gcladosOpenSnapshotFile(context.fileName, "rb+");
@@ -140,7 +145,7 @@ void gcladosSaveNewSnapshot(StatementContext context, void *value, size_t size) 
 
     char identifier[MAX_IDENTIFIER_LENGTH];
     memset(identifier, 0, MAX_IDENTIFIER_LENGTH);
-    gcladosConstructIdentifierName(context.functionName, 0, identifier);
+    gcladosConstructIdentifierName(context.functionName, snapshotIndex, identifier);
 
     fwrite(identifier, sizeof(char), MAX_IDENTIFIER_LENGTH, snapshotFile);
     fwrite(&size, sizeof(size_t), 1, snapshotFile);
@@ -149,7 +154,7 @@ void gcladosSaveNewSnapshot(StatementContext context, void *value, size_t size) 
     fclose(snapshotFile);
 }
 
-void updateSnapshot(StatementContext context, void *value, size_t size) {
+void updateSnapshot(StatementContext context, void *value, size_t size, size_t snapshotIndex) {
     gcladosSnapshotStats.updated += 1;
 
     FILE *snapshotFile = gcladosOpenSnapshotFile(context.fileName, "rb+");
@@ -159,7 +164,7 @@ void updateSnapshot(StatementContext context, void *value, size_t size) {
     }
 
     char identifier[FILENAME_MAX];
-    gcladosConstructIdentifierName(context.functionName, 0, identifier);
+    gcladosConstructIdentifierName(context.functionName, snapshotIndex, identifier);
 
     if(gcladosMoveCursorToSnapshot(snapshotFile, identifier)) {
         size_t oldSize;
@@ -171,6 +176,9 @@ void updateSnapshot(StatementContext context, void *value, size_t size) {
         gcladosMoveBlock(snapshotFile, ((long) size) - ((long) oldSize));
         fseek(snapshotFile, cursorPosition, SEEK_SET);
         fwrite(value, sizeof(char), size, snapshotFile);
+    } else {
+        fclose(snapshotFile);
+        gcladosPanic("Could not update snapshot: snapshot does not exist in file.", EXIT_FAILURE);
     }
 
     fclose(snapshotFile);
@@ -190,12 +198,14 @@ bool gcladosSnapshotsEqual(GcladosSnapshot first, GcladosSnapshot second) {
 }
 
 bool gcladosToMatchSnapshotPredicate(StatementContext context, void **value, GcladosSnapshotPredicateOptions *options) {
-    GcladosSnapshot *snapshot = gcladosGetSnapshot(context);
-
     gcladosSnapshotStats.total += 1;
+    ++GCLADOS_SNAPSHOT_INDEX_COUNTER;
+
+    GcladosSnapshot *snapshot = gcladosGetSnapshot(context, GCLADOS_SNAPSHOT_INDEX_COUNTER);
+
 
     if(snapshot == NULL) {
-        gcladosSaveNewSnapshot(context, *value, options->size);
+        gcladosSaveNewSnapshot(context, *value, options->size, GCLADOS_SNAPSHOT_INDEX_COUNTER);
 
         return true;
     }
@@ -210,7 +220,7 @@ bool gcladosToMatchSnapshotPredicate(StatementContext context, void **value, Gcl
             *snapshot);
 
     if(!result && GCLADOS_UPDATE_SNAPSHOTS) {
-        updateSnapshot(context, *value, options->size);
+        updateSnapshot(context, *value, options->size, GCLADOS_SNAPSHOT_INDEX_COUNTER);
         return true;
     }
 
