@@ -62,11 +62,17 @@ void gcladosPrintProgress(FILE *file, double percentage, size_t width) {
     fprintf(file, "%s", progressBuffer);
 }
 
+GcladosAnsiFlags gcladosDefaultFailureStyle() {
+    return gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
+}
+
+GcladosAnsiFlags gcladosDefaultSuccessStyle() {
+    return gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_GREEN), gcladosColors.bold());
+}
+
 char *gcladosGetFailedStatementMessage(bool pass, GcladosPredicate predicate, void *value) {
-    const GcladosAnsiFlags expectedValueFlags =
-            gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_GREEN), gcladosColors.bold());
-    const GcladosAnsiFlags receivedValueFlags =
-            gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
+    const GcladosAnsiFlags expectedValueFlags = gcladosDefaultSuccessStyle();
+    const GcladosAnsiFlags receivedValueFlags = gcladosDefaultFailureStyle();
 
     char *messageBuff = calloc(1024, sizeof(char));
     int offset = 0;

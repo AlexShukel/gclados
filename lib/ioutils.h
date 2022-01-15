@@ -6,7 +6,9 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <test.h>
+
+#include "colors.h"
+#include "test.h"
 
 // This function constructs failed statement message.
 // Parameters:
@@ -38,5 +40,8 @@ void gcladosPrintFileLines(FILE *file, int lineBegin, int lineEnd, int highlight
 char *gcladosConvertToHex(void *ptr, size_t size);
 // Function, that prints time in human-readable format.
 void gcladosPrintTime(clock_t time);
+
+GcladosAnsiFlags gcladosDefaultFailureStyle();
+GcladosAnsiFlags gcladosDefaultSuccessStyle();
 
 #endif

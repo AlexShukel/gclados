@@ -56,8 +56,7 @@ void gcladosPrintSummaryCell(GcladosSummary summary) {
     }
 
     if(summary.type == GCLADOS_SUMMARY_FAILURE) {
-        GcladosAnsiFlags flags =
-                gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
+        GcladosAnsiFlags flags = gcladosDefaultFailureStyle();
         char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
         printf("%s", colorizedBuffer);
         free(colorizedBuffer);
@@ -65,8 +64,7 @@ void gcladosPrintSummaryCell(GcladosSummary summary) {
     }
 
     if(summary.type == GCLADOS_SUMMARY_SUCCESS) {
-        GcladosAnsiFlags flags =
-                gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_GREEN), gcladosColors.bold());
+        GcladosAnsiFlags flags = gcladosDefaultSuccessStyle();
         char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
         printf("%s", colorizedBuffer);
         free(colorizedBuffer);
@@ -185,8 +183,7 @@ void gcladosPrintSummary(size_t totalTestSuites,
                 "%ld snapshot%s failed.",
                 snapshotSummaryStats.failed,
                 snapshotSummaryStats.failed == 1 ? "" : "s");
-        GcladosAnsiFlags flags =
-                gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
+        GcladosAnsiFlags flags = gcladosDefaultFailureStyle();
         char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
         gcladosColors.freeFlags(flags);
 

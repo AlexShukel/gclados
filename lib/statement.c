@@ -4,10 +4,7 @@
 
 #include "statement.h"
 
-#include <stdlib.h>
-
 #include "ioutils.h"
-#include "test.h"
 
 void gcladosCreateStatement(const char *functionName,
                             int line,
@@ -22,17 +19,13 @@ void gcladosCreateStatement(const char *functionName,
 
     bool pass = predicate.execute(context, value, predicate.options);
 
-    GcladosStatementResult *result = malloc(sizeof(GcladosStatementResult));
-    result->pass = pass;
-    result->failMessage = NULL;
-    result->line = line;
-    result->filePath = filePath;
-
     if(!pass) {
-        result->failMessage = gcladosGetFailedStatementMessage(pass, predicate, value);
+        gcladosAddStatementResult((GcladosStatementResult){
+                .failMessage = gcladosGetFailedStatementMessage(pass, predicate, value),
+                .filePath = filePath,
+                .line = line,
+        });
     }
 
     gcladosFreePredicate(&predicate);
-
-    gcladosAddStatementResult(result);
 }

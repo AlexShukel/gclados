@@ -58,41 +58,40 @@ bool gcladosRunNextTest(GcladosTestSuite suite, GcladosTestSuiteAccumulatedResul
 }
 
 void gcladosPrintSuite(GcladosTestSuite suite, GcladosTestSuiteAccumulatedResult state) {
-    char *status;
+    GcladosAnsiFlags flags;
+    char *text;
 
     switch(state.status) {
         case GCLADOS_WAITING:
-            status = gcladosColors.applyFlags(" WAIT ",
-                                              gcladosColors.createFlags(2,
-                                                                        gcladosColors.foregroundColor(GCLADOS_YELLOW),
-                                                                        gcladosColors.framed()));
+            text = " WAIT ";
+            flags = gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_YELLOW), gcladosColors.framed());
             break;
         case GCLADOS_RUNNING:
-            status = gcladosColors.applyFlags(
-                    " RUNS ",
-                    gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_CYAN), gcladosColors.framed()));
+            text = " RUNS ";
+            flags = gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_CYAN), gcladosColors.framed());
             break;
         case GCLADOS_FAILED:
-            status = gcladosColors.applyFlags(" FAIL ",
-                                              gcladosColors.createFlags(2,
-                                                                        gcladosColors.foregroundColor(GCLADOS_BLACK),
-                                                                        gcladosColors.backgroundColor(GCLADOS_RED)));
+            text = " FAIL ";
+            flags = gcladosColors.createFlags(2,
+                                              gcladosColors.foregroundColor(GCLADOS_BLACK),
+                                              gcladosColors.backgroundColor(GCLADOS_RED));
             break;
         case GCLADOS_PASS:
-            status = gcladosColors.applyFlags(
-                    " PASS ",
-                    gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_GREEN)));
+            text = " PASS ";
+            flags = gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_GREEN));
             break;
         case GCLADOS_SKIP:
-            status = gcladosColors.applyFlags(
-                    " SKIP ",
-                    gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_YELLOW)));
+            text = " SKIP ";
+            flags = gcladosColors.createFlags(1, gcladosColors.backgroundColor(GCLADOS_YELLOW));
             break;
     }
+
+    char *status = gcladosColors.applyFlags(text, flags);
 
     printf("%s %s", status, suite.testSuiteName);
 
     free(status);
+    gcladosColors.freeFlags(flags);
 
     if(state.status == GCLADOS_RUNNING) {
         gcladosPrintProgress(stdout, (double) (state.completedTestCount + 1) / (double) suite.testCount, 5);
@@ -102,9 +101,5 @@ void gcladosPrintSuite(GcladosTestSuite suite, GcladosTestSuiteAccumulatedResult
 }
 
 void gcladosFreeTestSuiteResult(GcladosTestSuiteAccumulatedResult testSuiteResult) {
-    for(size_t i = 0; i < testSuiteResult.testResultCount; ++i) {
-        gcladosFreeTestResult(testSuiteResult.testResults[i]);
-    }
-
     free(testSuiteResult.testResults);
 }
