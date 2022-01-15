@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "args.h"
 #include "builder.h"
 #include "globUtils.h"
 #include "panic.h"
@@ -18,6 +19,13 @@ const char RUN_COMMAND_SLUG[] = "run";
 const char RUN_COMMAND_SHORT_HELP[] = "Execute tests by glob pattern.";
 const char RUN_COMMAND_HELP[] =
         "Compiles & runs tests, which match specified glob pattern.\n"
+        "Options:\n"
+        "  --colors         - Enables / disables colored mode. Recommended to disable for terminals, which do not ANSI "
+        "codes.\n"
+        "  --updateSnapshot - Update all snapshots, which are failing.\n"
+        "           ...rest - Glob patterns to match test files.\n"
+        "     -- ...gccArgs - Additional arguments, passed directly into GCC compiler.\n"
+        "Notes:\n"
         "All options specified after command name and before double hyphen (--) will be treated as glob patterns.\n"
         "All options after double hyphen (--) will be passed directly into GCC compiler.\n"
         "If you would like to use other compiler than GCC, you can use \"generate\" command. See (gclados help "
@@ -55,7 +63,6 @@ const char RUN_COMMAND_HELP[] =
         "  This command will include \"main.c\" and \"lib.c\" into executable.";
 
 // Exceptions
-const char EMATCHING_GLOB_PATTERN[] = "Matching \"%s\" glob pattern failed: %s.\n";
 const char ECREATE_EXECUTABLE_FAILED[] = "Could not create temporary file for test executable.";
 const char ECOMPILATION_FAILED[] = "Failed to compile tests entrypoint. Reason: gcc exited with non-zero exit code.";
 const char ENOT_FOUND[] = "No tests found.\n";
@@ -74,12 +81,26 @@ typedef struct {
     char **gccArgs;
     // Count of "gccArgs" array.
     size_t gccArgCount;
+    // Should update snapshots?
+    bool updateSnapshots;
 } RunCommandOptions;
 
 // Function, that parses arguments for the run command.
 RunCommandOptions *parseRunArgs(int argc, char *argv[]) {
     // Allocating space for the options.
     RunCommandOptions *options = malloc(sizeof(RunCommandOptions));
+
+    Argument standardArguments[] = {
+            createBoolArgument("updateSnapshot", "Update snapshots"),
+    };
+
+    int standardArgumentCount = sizeof(standardArguments) / sizeof(Argument);
+
+    void **parsedArgs = parseArguments(standardArguments, standardArgumentCount, &argc, argv);
+
+    options->updateSnapshots = parsedArgs[0] != NULL ? *((bool *) parsedArgs[0]) : false;
+
+    freeParsedArguments(standardArgumentCount, parsedArgs);
 
     // Finding where is the double hyphen (--).
     // This is required because after double hyphen user can specify custom gcc arguments.
@@ -180,7 +201,7 @@ int executeRun(RunCommandOptions *options) {
         gcladosPanic(ECREATE_ENTRY_FAILED, EXIT_FAILURE);
     }
 
-    int buildStatusCode = buildTestFile(entry, parsedFiles, options->paths->gl_pathc);
+    int buildStatusCode = buildTestFile(entry, parsedFiles, options->paths->gl_pathc, options->updateSnapshots);
 
     fclose(entry);
 

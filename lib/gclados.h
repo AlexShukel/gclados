@@ -11,6 +11,8 @@
 #include "test.h"
 #include "testSuite.h"
 
+void gcladosSetUpdateSnapshots(bool updateSnapshots);
+
 // Function, which is used to run all test suites.
 // Parameters:
 //     suites[] - array of test suites.

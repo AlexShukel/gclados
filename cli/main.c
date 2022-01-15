@@ -22,7 +22,8 @@ GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
             createBoolArgument("colors", "Enables / disables stdout coloring with ANSI escape codes."),
     };
 
-    void **values = parseArguments(generalArguments, sizeof(generalArguments) / sizeof(Argument), argc, argv);
+    int generalArgumentCount = sizeof(generalArguments) / sizeof(Argument);
+    void **values = parseArguments(generalArguments, generalArgumentCount, argc, argv);
 
     GeneralArguments generalArgumentValues;
 
@@ -32,6 +33,8 @@ GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
         // By default, colored output is enabled.
         generalArgumentValues.colors = true;
     }
+
+    freeParsedArguments(generalArgumentCount, values);
 
     return generalArgumentValues;
 }

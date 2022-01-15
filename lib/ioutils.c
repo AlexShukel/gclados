@@ -162,4 +162,5 @@ void gcladosPrintTime(clock_t time) {
             printf(", ");
         }
     }
+    printf("\n");
 }

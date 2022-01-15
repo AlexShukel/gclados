@@ -102,6 +102,13 @@ ArgumentParseResult *tryParseBoolArgument(const Argument *argument, const int ar
     return NULL;
 }
 
+void freeParsedArguments(int argumentCount, void **parsedArgs) {
+    for(int i = 0; i < argumentCount; ++i) {
+        free(parsedArgs[i]);
+    }
+    free(parsedArgs);
+}
+
 Argument createBoolArgument(const char *name, const char *description) {
     Argument newArgument = {
             .name = name,

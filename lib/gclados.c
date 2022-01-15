@@ -178,7 +178,27 @@ void gcladosPrintSummary(size_t totalTestSuites,
 
     printf(GCLADOS_SUMMARY_ROW_FORMAT, "Time");
     gcladosPrintTime(time);
-    printf("\n");
+
+    if(snapshotSummaryStats.total > 0 && snapshotSummaryStats.failed > 0) {
+        char buffer[1024];
+        sprintf(buffer,
+                "%ld snapshot%s failed.",
+                snapshotSummaryStats.failed,
+                snapshotSummaryStats.failed == 1 ? "" : "s");
+        GcladosAnsiFlags flags =
+                gcladosColors.createFlags(2, gcladosColors.foregroundColor(GCLADOS_RED), gcladosColors.bold());
+        char *colorizedBuffer = gcladosColors.applyFlags(buffer, flags);
+        gcladosColors.freeFlags(flags);
+
+        flags = gcladosColors.createFlags(1, gcladosColors.bold());
+        char *command = gcladosColors.applyFlags("`gclados run --updateSnapshot`", flags);
+        gcladosColors.freeFlags(flags);
+
+        printf("\n%s. Inspect your code or run %s to update all snapshots.\n", colorizedBuffer, command);
+
+        free(colorizedBuffer);
+        free(command);
+    }
 }
 
 int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {

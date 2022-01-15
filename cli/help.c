@@ -16,7 +16,7 @@ const char USAGE_TEXT_TEMPLATE[] = "gclados %s [options]";
 const char GENERAL_HELP_TEMPLATE[] =
         "Usage: %s\n"
         "General options:\n"
-        "  --colors - Enables / disables colored mode. Recommended for terminals, which do not support them.\n"
+        "  --colors - Enables / disables colored mode. Recommended to disable for terminals, which do not ANSI codes.\n"
         "Commands:\n"
         "%s";
 

@@ -22,7 +22,7 @@ const char GEN_COMMAND_HELP[] =
         "Usually, this command is used when it is necessary to use other compiler (not GCC).\n"
         "Options:\n"
         "  --output - Specify path to the output file. If not specified, output will appear in stdout.\n"
-        "  --colors - Enables / disables colored mode. Recommended for terminals, which do not support them.\n"
+        "  --colors - Enables / disables colored mode. Recommended to disable for terminals, which do not ANSI codes.\n"
         "   ...rest - The rest of the parameters will be treated as glob patterns.\n";
 
 // Exceptions
@@ -100,7 +100,7 @@ int executeGenerate(const GenerateCommandOptions *options) {
     }
 
     // Building test entry.
-    int buildStatus = buildTestFile(outputFile, parsedFiles, options->paths->gl_pathc);
+    int buildStatus = buildTestFile(outputFile, parsedFiles, options->paths->gl_pathc, false);
 
     if(options->outputFile != NULL) {
         fclose(outputFile);

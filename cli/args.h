@@ -46,6 +46,8 @@ typedef struct Argument {
 //       into subprocesses. Example: gclados run hello.test.c -- <gcc arguments>.
 void **parseArguments(const Argument arguments[], int argumentCount, int *argc, char *argv[]);
 
+void freeParsedArguments(int argumentCount, void **parsedArgs);
+
 // Function, which creates new boolean argument (flag).
 // Parameters:
 //     *name        - argument name. Described in the UX section where referred to as <argument-name>

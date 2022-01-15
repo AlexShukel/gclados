@@ -13,7 +13,7 @@
 #define MACRO_VALUE(name) STR_VALUE(name)
 #define GCLADOS_TEST_PREFIX_AS_STRING MACRO_VALUE(GCLADOS_TEST_PREFIX)
 
-int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t count) {
+int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t count, bool updateSnapshots) {
     // Including required modules at the file beginning.
     fprintf(outputFile, "#include \"gclados.h\"\n#include <stdbool.h>\n");
 
@@ -31,8 +31,10 @@ int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t cou
     fprintf(outputFile, "\nint main() {\n");
     // Toggling color support.
     fprintf(outputFile,
-            "    gcladosColors.setColorsSupported(%s);\n",
-            gcladosColors.colorsSupported() ? "true" : "false");
+            "    gcladosColors.setColorsSupported(%s);\n"
+            "    gcladosSetUpdateSnapshots(%s);\n",
+            gcladosColors.colorsSupported() ? "true" : "false",
+            updateSnapshots ? "true" : "false");
 
     for(int i = 0; i < count; ++i) {
         // Generating array of tests.

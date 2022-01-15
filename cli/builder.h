@@ -5,6 +5,7 @@
 #define GCLADOS_BUILDER_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "filenameUtils.h"
 #include "testParser.h"
@@ -17,6 +18,6 @@
 // Returns:
 //     Temporary file name, containing generated entry code. This string should be disposed after using it, by calling
 //     free.
-int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t count);
+int buildTestFile(FILE *outputFile, const ParsedTestFile testFiles[], size_t count, bool updateSnapshots);
 
 #endif
