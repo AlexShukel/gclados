@@ -24,6 +24,7 @@ bool gcladosEachPredicate(StatementContext context, char **value, const GcladosA
     return true;
 }
 
+// TODO: make this message beautiful
 // Received / expected value converter to string for the "each" predicate.
 char *gcladosEachMessage(char **value, const GcladosArrayPredicateOptions *options, bool pass) {
     char *message = calloc(1024, sizeof(char));
