@@ -88,13 +88,13 @@ void gcladosPrintSuite(GcladosTestSuite suite, GcladosTestSuiteAccumulatedResult
 
     char *status = gcladosColors.applyFlags(text, flags);
 
-    printf("%s %s", status, suite.testSuiteName);
+    printf("%s %s ", status, suite.testSuiteName);
 
     free(status);
     gcladosColors.freeFlags(flags);
 
     if(state.status == GCLADOS_RUNNING) {
-        gcladosPrintProgress(stdout, (double) (state.completedTestCount + 1) / (double) suite.testCount, 5);
+        gcladosPrintProgress(stdout, (double) (state.completedTestCount + 1) / (double) suite.testCount, 10);
     }
 
     printf("\n");

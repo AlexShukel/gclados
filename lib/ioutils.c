@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-#include "colors.h"
 #include "panic.h"
 
 void gcladosPrintLineNumber(int number, bool highlight) {
@@ -45,21 +45,84 @@ void gcladosPrintFileLines(FILE *file, int lineBegin, int lineEnd, int highlight
     putc('\n', stdout);
 }
 
-void gcladosPrintProgress(FILE *file, double percentage, size_t width) {
-    size_t progressBufferLength = width + 3;
-    char progressBuffer[width + progressBufferLength];
+const size_t GCLADOS_MAX_PROGRESS_TEXT_WIDTH = 6;
+const size_t GCLADOS_MIN_PROGRESS_WIDTH = GCLADOS_MAX_PROGRESS_TEXT_WIDTH + 2;
 
-    progressBuffer[0] = '[';
-    progressBuffer[progressBufferLength - 2] = ']';
-    progressBuffer[progressBufferLength - 1] = '\0';
+void gcladosPrintMonochromaticProgress(FILE *file, double percentage, size_t center, size_t width) {
+    char progressBuffer[width + 1];
+    progressBuffer[width] = '\0';
 
-    size_t center = (size_t) ((double) width * percentage) + 1;
+    memset(progressBuffer, '=', center);
+    memset(progressBuffer + center, ' ', width - center);
 
-    for(size_t i = 1; i < width + 1; i++) {
-        progressBuffer[i] = i <= center ? '#' : ' ';
+    char progressText[GCLADOS_MAX_PROGRESS_TEXT_WIDTH + 1];
+    memset(progressText, 0, GCLADOS_MAX_PROGRESS_TEXT_WIDTH + 1);
+
+    sprintf(progressText, " %-3d%% ", (int) (percentage * 100));
+
+    size_t textOffset = (width - strlen(progressText)) / 2;
+    char savedSymbol = progressBuffer[textOffset + strlen(progressText)];
+    sprintf(progressBuffer + textOffset, "%s", progressText);
+    progressBuffer[textOffset + strlen(progressText)] = savedSymbol;
+
+    fprintf(file, "[%s]", progressBuffer);
+}
+
+void gcladosPrintColoredProgress(FILE *file, double percentage, size_t center, size_t width) {
+    char buffer[width + 1];
+    memset(buffer, ' ', width);
+    buffer[width + 1] = '\0';
+
+    size_t textOffset = (width - 4) / 2;
+
+    sprintf(buffer + textOffset, "%-3d%%", (int) (percentage * 100));
+    buffer[textOffset + 4] = ' ';
+
+    char progress[center + 1];
+    progress[center] = '\0';
+    strncpy(progress, buffer, center);
+
+    GcladosAnsiFlags progressStyle = gcladosColors.createFlags(2,
+                                                               gcladosColors.backgroundColor(GCLADOS_GREEN),
+                                                               gcladosColors.foregroundColor(GCLADOS_BLACK));
+
+    char *coloredProgress = gcladosColors.applyFlags(progress, progressStyle);
+    fprintf(file, "%s", coloredProgress);
+
+    free(coloredProgress);
+    gcladosColors.freeFlags(progressStyle);
+
+    if(center >= width) {
+        return;
     }
 
-    fprintf(file, "%s", progressBuffer);
+    GcladosAnsiFlags backgroundStyle = gcladosColors.createFlags(2,
+                                                                 gcladosColors.backgroundColor(GCLADOS_WHITE),
+                                                                 gcladosColors.foregroundColor(GCLADOS_BLACK));
+
+    size_t backgroundWidth = width - center;
+    char background[backgroundWidth + 1];
+    background[backgroundWidth] = '\0';
+    strncpy(background, buffer + center, backgroundWidth);
+
+    char *coloredBackground = gcladosColors.applyFlags(background, backgroundStyle);
+    fprintf(file, "%s", coloredBackground);
+
+    free(coloredBackground);
+    gcladosColors.freeFlags(backgroundStyle);
+}
+
+void gcladosPrintProgress(FILE *file, double percentage, size_t width) {
+    if(width < GCLADOS_MIN_PROGRESS_WIDTH) {
+        gcladosPanic("Progress bar is too short.", EXIT_FAILURE);
+    }
+
+    size_t center = (size_t) ((double) (width - 1) * percentage) + 1;
+    if(gcladosColors.colorsSupported()) {
+        gcladosPrintColoredProgress(file, percentage, center, width);
+    } else {
+        gcladosPrintMonochromaticProgress(file, percentage, center, width);
+    }
 }
 
 GcladosAnsiFlags gcladosDefaultFailureStyle() {
