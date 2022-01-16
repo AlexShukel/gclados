@@ -1,6 +1,7 @@
 #include "gclados.h"
 
 #include <string.h>
+#include <assert.h>
 
 void testBoolPredicateLogic() {
     GcladosPredicate boolPredicate = gclados.toBeTruthy();

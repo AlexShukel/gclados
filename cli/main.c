@@ -40,6 +40,18 @@ GeneralArguments parseGeneralArguments(int *argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+    Command runCmd = createRunCommand();
+    Command generateCmd = createGenerateCommand();
+    Command helpCmd;
+    Command *allCommands[] = {
+            &runCmd,
+            &generateCmd,
+            &helpCmd,
+    };
+    size_t commandCount = sizeof(allCommands) / sizeof(Command *);
+
+    helpCmd = createHelpCommand(allCommands, commandCount);
+
     // If no CLI arguments specified, printing general help.
     if(argc == 1) {
         printGeneralHelp();
@@ -54,18 +66,6 @@ int main(int argc, char *argv[]) {
 
     GeneralArguments arguments = parseGeneralArguments(&argc, argv);
     gcladosColors.setColorsSupported(arguments.colors);
-
-    Command runCmd = createRunCommand();
-    Command generateCmd = createGenerateCommand();
-    Command helpCmd;
-    Command *allCommands[] = {
-            &runCmd,
-            &generateCmd,
-            &helpCmd,
-    };
-    size_t commandCount = sizeof(allCommands) / sizeof(Command *);
-
-    helpCmd = createHelpCommand(allCommands, commandCount);
 
     Command *currentCommand = NULL;
 

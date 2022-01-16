@@ -203,7 +203,6 @@ bool gcladosToMatchSnapshotPredicate(StatementContext context, void **value, Gcl
 
     GcladosSnapshot *snapshot = gcladosGetSnapshot(context, GCLADOS_SNAPSHOT_INDEX_COUNTER);
 
-
     if(snapshot == NULL) {
         gcladosSaveNewSnapshot(context, *value, options->size, GCLADOS_SNAPSHOT_INDEX_COUNTER);
 

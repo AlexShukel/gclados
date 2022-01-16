@@ -8,7 +8,7 @@ TEST(test1) {
 }
 
 TEST(test2) {
-    char *snap2 = "aabb";
+    char *snap2 = "aab";
     ensure(snap2, gclados.toMatchSnapshot(strlen(snap2)));
 
     char *snap3 = "aacd";

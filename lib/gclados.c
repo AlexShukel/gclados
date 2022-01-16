@@ -10,6 +10,7 @@
 #include <time.h>
 
 #include "ioutils.h"
+#include "logging.h"
 #include "snapshots.h"
 
 const char *GCLADOS_SUMMARY_ROW_FORMAT = "%12s: ";
@@ -200,6 +201,10 @@ void gcladosPrintSummary(size_t totalTestSuites,
 }
 
 int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
+    char buffer[256];
+    sprintf(buffer, "Running %lu test suites", count);
+    gcladosLog(buffer);
+
     size_t completedTestSuites = 0;
 
     GcladosTestSuiteAccumulatedResult *results = calloc(count, sizeof(GcladosTestSuiteAccumulatedResult));
@@ -209,15 +214,34 @@ int gcladosRunTestSuites(GcladosTestSuite *suites, size_t count) {
     while(completedTestSuites < count) {
         size_t currentSuiteIndex = completedTestSuites;
 
+        sprintf(buffer, "Running %lu/%lu test suite...", currentSuiteIndex + 1, count);
+        gcladosLog(buffer);
+
         results[currentSuiteIndex] = gcladosInitializeTestSuiteResult(suites[currentSuiteIndex]);
         results[currentSuiteIndex].status = GCLADOS_RUNNING;
 
         bool suiteCompleted = false;
 
         while(!suiteCompleted) {
+            sprintf(buffer,
+                    "Running %lu/%lu test from %lu test suite...",
+                    results[currentSuiteIndex].completedTestCount + 1,
+                    suites[currentSuiteIndex].testCount,
+                    currentSuiteIndex + 1);
+            gcladosLog(buffer);
+
             gcladosDrawSuites(suites, results, count, true);
             suiteCompleted = gcladosRunNextTest(suites[currentSuiteIndex], &results[currentSuiteIndex]);
+
+            sprintf(buffer,
+                    "Test ended with status: %s",
+                    results[currentSuiteIndex].testResults[results[currentSuiteIndex].completedTestCount - 1].pass
+                            ? "success"
+                            : "failure");
+            gcladosLog(buffer);
         }
+
+        gcladosLog("Test suite execution ended.");
 
         ++completedTestSuites;
         gcladosCompleteTestSuiteResult(&results[currentSuiteIndex]);
