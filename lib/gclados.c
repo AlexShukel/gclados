@@ -193,7 +193,7 @@ void gcladosPrintSummary(size_t totalTestSuites,
         char *command = gcladosColors.applyFlags("`gclados run --updateSnapshot`", flags);
         gcladosColors.freeFlags(flags);
 
-        printf("\n%s. Inspect your code or run %s to update all snapshots.\n", colorizedBuffer, command);
+        printf("\n%s Inspect your code or run %s to update all snapshots.\n", colorizedBuffer, command);
 
         free(colorizedBuffer);
         free(command);
