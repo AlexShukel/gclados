@@ -1,6 +1,6 @@
 # GcLaDOS
 
-> Simple testing framework for the C language
+> Simple unit testing framework for the C language
 
 The API as well as CLI design of this project was highly inspired by [Jest](https://github.com/facebook/jest#readme).
 
@@ -141,4 +141,3 @@ int main() {
 Then, you can compile it with any compiler, and run the executable.
 
 The output of these three different methods will be the same, so pick most suitable for your case.
-
