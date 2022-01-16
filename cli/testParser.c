@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dynamicArray.h"
+
 // TEST macro name, which is used to identify tests in file.
 const char GCLADOS_TEST_TOKEN[] = "TEST(";
 // The length of GCLADOS_TEST_TOKEN.
@@ -62,10 +64,8 @@ char *extractComment(const char *buffer, size_t begin, size_t end) {
     return comment;
 }
 
-int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, ParsedTest *output) {
+void processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, GcladosDynamicArray *output) {
     size_t lastIndex = bytesRead - 5;
-
-    int currentTest = 0;
 
     size_t lastCommentBegin = -1, lastCommentEnd = -1;
 
@@ -105,32 +105,42 @@ int processBuffer(const char buffer[testFileBufferSize], size_t bytesRead, Parse
             char *name = calloc(endPoint - beginPoint + 1, sizeof(char));
             memcpy(name, buffer + beginPoint, (endPoint - beginPoint) * sizeof(char));
 
-            ParsedTest newTest = {
+            ParsedTest *newTest = malloc(sizeof(ParsedTest));
+            *newTest = (ParsedTest){
                     .name = name,
                     .description = extractComment(buffer, lastCommentBegin, lastCommentEnd),
             };
 
-            lastCommentBegin = lastCommentEnd = -1;
+            gcladosPush(output, newTest);
 
-            output[currentTest++] = newTest;
+            lastCommentBegin = lastCommentEnd = -1;
         } else if(!isspace(buffer[i])) {
             lastCommentBegin = lastCommentEnd = -1;
         }
     }
-
-    return currentTest;
 }
 
 // TODO: rewrite this function
 ParsedTestFile parseTestFile(char *path) {
     FILE *file = fopen(path, "r");
 
-    ParsedTest *tests = calloc(100, sizeof(ParsedTest));
-
     char buffer[testFileBufferSize];
     size_t bytesRead = fread(buffer, sizeof(char), testFileBufferSize, file);
 
-    size_t count = processBuffer(buffer, bytesRead, tests);
+    GcladosDynamicArray *tempParsedTests = gcladosCreateDynamicArray();
+
+    processBuffer(buffer, bytesRead, tempParsedTests);
+
+    size_t count = tempParsedTests->length;
+    ParsedTest *tests = calloc(sizeof(ParsedTest), count);
+
+    for(size_t i = 0; i < count; ++i) {
+        ParsedTest *test = (ParsedTest *) gcladosGet(tempParsedTests, i);
+        tests[i] = *test;
+        free(test);
+    }
+
+    gcladosFreeDynamicArray(tempParsedTests);
 
     ParsedTestFile testFile = {
             .fileName = path,

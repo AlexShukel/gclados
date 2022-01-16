@@ -34,7 +34,7 @@ bool gcladosColorsSupported() {
 }
 
 char *gcladosApplyAnsiFlags(char *string, GcladosAnsiFlags flags) {
-    if(!gcladosColorsSupported()) {
+    if(!gcladosColorsSupported() || flags.count == 0) {
         char *newString = calloc(strlen(string) + 1, sizeof(char));
         strcpy(newString, string);
         return newString;
