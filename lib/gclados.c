@@ -101,6 +101,7 @@ void gcladosPrintSummary(size_t totalTestSuites,
                          GcladosSnapshotStats snapshotSummaryStats,
                          clock_t time) {
 
+    printf("\n");
     GcladosSummary testSuiteSummary[] = {
             {
                     .type = GCLADOS_SUMMARY_FAILURE,
